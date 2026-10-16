@@ -128,6 +128,7 @@ require("claude").setup({
 - Neo-tree、nvim-tree
 - Gitsigns、which-key、indent-blankline
 - lazy.nvim、mason.nvim、Noice、nvim-notify、Trouble
+- bufferline、Oil、Flash、nvim-navic、dashboard-nvim
 - mini.statusline、mini.tabline、mini.indentscope
 - lualine 专用主题
 

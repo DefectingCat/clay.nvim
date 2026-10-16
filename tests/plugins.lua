@@ -43,6 +43,11 @@ local checks = {
   { "noice.nvim", function() require("noice.config.highlights").setup() end },
   { "nvim-notify", function() require("notify.config.highlights").setup() end },
   { "trouble.nvim", function() require("trouble.config.highlights").setup() end },
+  { "bufferline.nvim", function() require("bufferline").setup({ options = { show_buffer_icons = false } }) end },
+  { "oil.nvim", function() require("oil").setup({ default_file_explorer = false, columns = {} }) end },
+  { "flash.nvim", function() require("flash.highlight").setup() end },
+  { "nvim-navic", function() require("nvim-navic").setup({ highlight = true }) end },
+  { "dashboard-nvim", function() require("dashboard").setup({ theme = "doom" }) end },
 }
 
 local function run()

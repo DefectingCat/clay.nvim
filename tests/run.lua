@@ -115,7 +115,7 @@ local function run()
         end
       end
     end
-    for _, name in ipairs({ "CmpItemAbbr", "BlinkCmpLabel", "SnacksPickerFile", "NeoTreeFileName" }) do
+    for _, name in ipairs({ "CmpItemAbbr", "BlinkCmpLabel", "SnacksPickerFile", "NeoTreeFileName", "OilFile", "NavicText", "NavicIconsFunction", "TroubleText" }) do
       equal(hl(name).bg, nil, name .. " must not paint over a selected row")
     end
   end)
@@ -123,7 +123,7 @@ local function run()
   test("background defaults to transparent and can switch to opaque and back", function()
     load()
     equal(theme.get_palette().bg, "#111315")
-    for _, name in ipairs({ "Normal", "NormalNC", "SignColumn", "FoldColumn", "WinBar", "MsgArea", "NeoTreeNormal", "NeoTreeNormalNC", "NvimTreeNormal", "NvimTreeNormalNC" }) do
+    for _, name in ipairs({ "Normal", "NormalNC", "SignColumn", "FoldColumn", "WinBar", "MsgArea", "NeoTreeNormal", "NeoTreeNormalNC", "NvimTreeNormal", "NvimTreeNormalNC", "TroubleNormal", "NoiceSplit", "BufferLineFill", "BufferLineBuffer" }) do
       equal(hl(name).bg, nil, name .. " should be transparent by default")
     end
     equal(hl("NormalFloat").bg, color(colors.float))
