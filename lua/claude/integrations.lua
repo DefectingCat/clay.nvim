@@ -116,6 +116,7 @@ function M.get(c, opts)
   for group, target in pairs(links) do
     groups[group] = { link = target }
   end
+  groups = vim.tbl_extend("force", groups, require("claude.integrations.ui").get(c, opts))
   return groups
 end
 

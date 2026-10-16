@@ -35,7 +35,7 @@ CLAUDE_ACCENT=minimal make preview
 CLAUDE_ACCENT=expressive make preview
 ```
 
-预览使用独立配置与示例文件，启用行号、当前行、状态栏和一条示例诊断。优先使用 Neovim 的 Lua Tree-sitter parser；未安装 parser 时回退到传统语法高亮。
+预览使用独立配置与 `examples/demo.lua`，启用行号、当前行、状态栏和一条示例诊断。同目录还有 Rust、Go、Python、TypeScript、C、C++ 和 Java 样例，预览会话里用 `:edit examples/demo.rs` 这类路径打开。有对应 Tree-sitter parser 时优先使用；未安装时回退到传统语法高亮。
 
 `design/claude-grayscale.html` 保留最初的交互设计稿；`make preview` 展示实际主题。
 
@@ -127,6 +127,7 @@ require("claude").setup({
 - nvim-cmp、blink.cmp
 - Neo-tree、nvim-tree
 - Gitsigns、which-key、indent-blankline
+- lazy.nvim、mason.nvim、Noice、nvim-notify、Trouble
 - mini.statusline、mini.tabline、mini.indentscope
 - lualine 专用主题
 
@@ -174,3 +175,11 @@ make test
 测试需要 Lua Tree-sitter parser，检查加载与重载、三档点缀、灰阶约束、链接有效性、透明背景、配置覆盖、终端色板、lualine 数据和真实 Lua 定义/调用 capture。测试在独立 Neovim 进程运行，不加载个人配置。
 
 已在 Neovim 0.10.4 和 0.12.5 上通过全部 13 项检查，包含灰阶明暗层级与 Clay 焦点。部分插件高亮名称已对照上游源码核对；尚未逐一运行完整的第三方插件组合。
+
+可选的真实插件检查会加载指定 checkout 的高亮初始化代码，并验证延迟加载、主题重载、实色背景和自定义 Clay；不会读取个人配置，也不会下载或安装插件：
+
+```bash
+CLAUDE_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/other/checkouts" make test-plugins
+```
+
+缺少的 checkout 会明确报告为 `SKIP`。此检查验证高亮生命周期，不等同于所有插件功能的端到端测试。

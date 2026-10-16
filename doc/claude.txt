@@ -62,7 +62,8 @@ INTEGRATIONS                                            *claude-integrations*
 
 Telescope, Snacks picker/dashboard/indent, nvim-cmp, blink.cmp, Neo-tree,
 nvim-tree, Gitsigns, which-key, indent-blankline, mini.statusline, mini.tabline,
-and mini.indentscope have highlight mappings. Plugins can add or override
+mini.indentscope, lazy.nvim, mason.nvim, Noice, nvim-notify, and Trouble have
+highlight mappings. Plugins can add or override
 groups; file icons can use separate third-party colors.
 
 Configure lualine after claude.setup():
@@ -78,5 +79,9 @@ From the repository directory run `make preview`. This uses an isolated demo
 configuration and works over SSH. Exit with :q!. Set CLAUDE_ACCENT=minimal or
 CLAUDE_ACCENT=expressive to compare alternatives. Run `make test` for checks;
 the tests require a Lua Tree-sitter parser.
+
+examples/demo.lua is the preview buffer. The same directory also has Rust, Go,
+Python, TypeScript, C, C++, and Java samples. Open one from the preview
+session with :edit. A matching Tree-sitter parser is used when installed.
 
  vim:tw=78:ts=8:ft=help:norl:
