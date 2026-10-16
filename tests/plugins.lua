@@ -35,6 +35,31 @@ local function unchanged(expected, label)
     local actual = vim.api.nvim_get_hl(0, { name = name, link = false })
     assert(vim.deep_equal(spec, actual), label .. " replaced " .. name .. ": " .. vim.inspect(actual))
   end
+  -- Also inspect groups created by the plugins, not only names defined by us:
+  -- a stale/incorrect group name can otherwise leave an upstream rainbow intact.
+  local palette = theme.get_palette()
+  local clay, canvas = tonumber(palette.clay:sub(2), 16), tonumber(palette.bg:sub(2), 16)
+  local prefixes = {
+    "Lazy", "Mason", "Noice", "Notify", "Trouble", "BufferLine", "Oil", "Flash", "Navic", "Dashboard",
+    "Todo", "RainbowDelimiter", "Headline", "Dash", "DoubleDash", "CodeBlock", "Quote", "Yanky",
+    "Scrollbar", "LightBulb", "GitGutter", "IndentLine", "MiniJump", "MiniStarter", "MiniSurround",
+    "MiniTrailspace", "MiniCursorword", "MiniDiff",
+  }
+  for name in pairs(vim.api.nvim_get_hl(0, {})) do
+    for _, prefix in ipairs(prefixes) do
+      if name:sub(1, #prefix) == prefix then
+        local spec = vim.api.nvim_get_hl(0, { name = name, link = false })
+        for _, key in ipairs({ "fg", "bg", "sp" }) do
+          local value = spec[key]
+          if value and value ~= clay and value ~= canvas then
+            local r, g, b = math.floor(value / 65536), math.floor(value / 256) % 256, value % 256
+            assert(r == g and g == b, label .. " introduced a chromatic " .. name .. "." .. key)
+          end
+        end
+        break
+      end
+    end
+  end
 end
 
 local checks = {
@@ -48,13 +73,34 @@ local checks = {
   { "flash.nvim", function() require("flash.highlight").setup() end },
   { "nvim-navic", function() require("nvim-navic").setup({ highlight = true }) end },
   { "dashboard-nvim", function() require("dashboard").setup({ theme = "doom" }) end },
+  { "todo-comments.nvim", function() require("todo-comments").setup({}) end },
+  { "rainbow-delimiters.nvim", function() vim.cmd.runtime("plugin/rainbow-delimiters.lua") end },
+  { "headlines.nvim", function() require("headlines").setup({}) end },
+  { "yanky.nvim", function()
+    require("yanky.config").setup({})
+    require("yanky.highlight").setup()
+  end },
+  { "nvim-scrollbar", function() require("scrollbar").setup({ set_highlights = false }) end },
+  { "nvim-lightbulb", function() require("nvim-lightbulb").setup({}) end, min_version = "0.11.0" },
+  { "vim-gitgutter", function() vim.cmd.runtime("plugin/gitgutter.vim") end },
+  { "indentmini.nvim", function() require("indentmini").setup({}) end },
+  { "mini.nvim", function()
+    for _, module in ipairs({ "jump", "jump2d", "surround", "trailspace", "cursorword" }) do
+      require("mini." .. module).setup({})
+    end
+    require("mini.starter").setup({ autoopen = false })
+    require("mini.diff").setup({ source = require("mini.diff").gen_source.none() })
+  end },
 }
 
 local function run()
   local count, skipped = 0, 0
   for _, check in ipairs(checks) do
     local name, setup = unpack(check)
-    if add(name) then
+    if check.min_version and vim.fn.has("nvim-" .. check.min_version) == 0 then
+      skipped = skipped + 1
+      print("SKIP " .. name .. ": upstream requires Neovim " .. check.min_version .. "+")
+    elseif add(name) then
       local expected = snapshot()
       setup()
       unchanged(expected, name .. " late initialization")

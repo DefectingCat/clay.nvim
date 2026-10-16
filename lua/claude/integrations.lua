@@ -118,6 +118,7 @@ function M.get(c, opts)
   end
   groups = vim.tbl_extend("force", groups, require("claude.integrations.ui").get(c, opts))
   groups = vim.tbl_extend("force", groups, require("claude.integrations.navigation").get(c, opts))
+  groups = vim.tbl_extend("force", groups, require("claude.integrations.editing").get(c, opts))
   return groups
 end
 

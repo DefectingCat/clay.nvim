@@ -129,10 +129,25 @@ require("claude").setup({
 - Gitsigns、which-key、indent-blankline
 - lazy.nvim、mason.nvim、Noice、nvim-notify、Trouble
 - bufferline、Oil、Flash、nvim-navic、dashboard-nvim
-- mini.statusline、mini.tabline、mini.indentscope
+- todo-comments、rainbow-delimiters、headlines、Yanky
+- nvim-scrollbar、nvim-lightbulb、vim-gitgutter、indentmini
+- mini.statusline、mini.tabline、mini.indentscope、mini.cursorword、mini.diff
+- mini.jump、mini.jump2d、mini.starter、mini.surround、mini.trailspace
 - lualine 专用主题
 
 这些映射不会主动加载插件。插件新增的高亮组、第三方图标的独立颜色以及用户覆盖仍可能带入其他颜色；可通过 `:Inspect`、`:highlight` 和 `overrides` 调整。
+
+rainbow-delimiters 使用不同明度的灰色区分括号层级；TODO、Git 和诊断仍使用灰阶。Flash / mini 跳转标签、当前操作提示使用 Clay。Bufferline 的非活动区域跟随透明设置，选中项保留实色背景。
+
+### 插件自身的配色选项
+
+nvim-scrollbar 默认会主动重建高亮，需要关闭它的颜色生成，让主题提供滑块、标记和 Clay 焦点：
+
+```lua
+require("scrollbar").setup({ set_highlights = false })
+```
+
+Bufferline 保持默认的 `options.themable = true` 即可。nvim-navic 需要在其配置中设置 `highlight = true`，才会使用 `NavicText` / `NavicIcons*`。这些配置由用户启用，主题本身不会修改插件选项。
 
 ### lualine
 
@@ -177,10 +192,12 @@ make test
 
 已在 Neovim 0.10.4 和 0.12.5 上通过全部 13 项检查，包含灰阶明暗层级与 Clay 焦点。部分插件高亮名称已对照上游源码核对；尚未逐一运行完整的第三方插件组合。
 
-可选的真实插件检查会加载指定 checkout 的高亮初始化代码，并验证延迟加载、主题重载、实色背景和自定义 Clay；不会读取个人配置，也不会下载或安装插件：
+可选的真实插件检查会加载指定 checkout 的初始化代码，并验证延迟加载、主题重载、实色背景、自定义 Clay 和插件生成的颜色；不会读取个人配置，也不会下载或安装插件：
 
 ```bash
 CLAUDE_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/other/checkouts" make test-plugins
 ```
 
-缺少的 checkout 会明确报告为 `SKIP`。此检查验证高亮生命周期，不等同于所有插件功能的端到端测试。
+本次新增适配已在 Neovim 0.12.5 上通过 19 个真实插件仓库的检查（mini.nvim 包含 7 个模块）。0.10.4 上通过 18 个，当前上游要求 0.11+ 的 nvim-lightbulb 明确跳过；主题本身的高亮映射仍通过 0.10.4 检查。
+
+缺少的 checkout 或不满足插件版本要求会明确报告为 `SKIP`。此检查验证高亮生命周期，不等同于所有插件功能的端到端测试。

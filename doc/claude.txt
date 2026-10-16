@@ -63,9 +63,22 @@ INTEGRATIONS                                            *claude-integrations*
 Telescope, Snacks picker/dashboard/indent, nvim-cmp, blink.cmp, Neo-tree,
 nvim-tree, Gitsigns, which-key, indent-blankline, mini.statusline, mini.tabline,
 mini.indentscope, lazy.nvim, mason.nvim, Noice, nvim-notify, Trouble, bufferline,
-Oil, Flash, nvim-navic, and dashboard-nvim have highlight mappings.
-Plugins can add or override
-groups; file icons can use separate third-party colors.
+Oil, Flash, nvim-navic, dashboard-nvim, todo-comments, rainbow-delimiters,
+headlines, Yanky, nvim-scrollbar, nvim-lightbulb, vim-gitgutter, and indentmini
+have highlight mappings. Additional mini modules: jump, jump2d, starter,
+surround, trailspace, cursorword, and diff. Plugins can add or override groups;
+file icons can use separate third-party colors.
+
+Rainbow delimiters use neutral shades for nesting. TODO, Git, and diagnostics
+stay grayscale; active jump labels and interaction cues use Clay.
+
+Disable nvim-scrollbar's own highlight generation to use the theme's groups:
+>
+    require('scrollbar').setup({ set_highlights = false })
+<
+Keep bufferline's options.themable=true (its default). Set highlight=true in
+nvim-navic's setup to enable its icon/text highlights. The theme does not alter
+these plugin settings.
 
 Configure lualine after claude.setup():
 >
