@@ -12,6 +12,15 @@ Requires Neovim 0.10.4+ and a true-color terminal.
 setup() is optional. Each call replaces configuration using the defaults below.
 Run :colorscheme claude again to apply changed options.
 
+VERSIONING                                                 *claude-versioning*
+
+Releases use annotated Git tags named vMAJOR.MINOR.PATCH. See CHANGELOG.md for
+release notes and RELEASING.md for compatibility rules and release steps.
+During 0.x development, fixes increment the patch version; new features and
+breaking changes increment the minor version. Breaking and major visual changes
+are documented explicitly. Neovim version requirements are separate from the
+theme's release version. Local directory installations use the current checkout.
+
 OPTIONS                                                      *claude-options*
 
 accent              'restrained'  'minimal', 'restrained', or 'expressive'

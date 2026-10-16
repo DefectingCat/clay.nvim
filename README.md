@@ -19,6 +19,18 @@
 
 以上语法层级以 Tree-sitter 为准；点缀范围也可通过下面的 `accent` 选项切换。
 
+## 版本与发布
+
+发布版本以 Git 附注标签 `vMAJOR.MINOR.PATCH` 为准，变更记录见 [CHANGELOG.md](CHANGELOG.md)，兼容性规则与发布步骤见 [RELEASING.md](RELEASING.md)。`0.x` 阶段仍在完善接口；修复递增修订号，新增功能或不兼容调整递增次版本号，并在变更日志中说明迁移方式。
+
+在 Git checkout 中查看当前修订：
+
+```bash
+git describe --tags --match 'v[0-9]*' --dirty --always
+```
+
+标签后的提交会带上提交距离和哈希，已跟踪文件有未提交修改时会带上 `-dirty`。README 和 Lua 模块不重复维护当前版本常量。文档中的 Neovim 版本号表示运行环境要求。
+
 ## 直接预览
 
 需要 Neovim 0.10.4+ 和支持 true color 的终端。无需安装插件、无需修改个人配置：
