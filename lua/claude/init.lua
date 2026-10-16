@@ -2,7 +2,7 @@ local M = {}
 
 local defaults = {
   accent = "restrained", -- minimal | restrained | expressive
-  transparent = false,
+  transparent = true,
   italic_comments = true,
   bold_keywords = true,
   terminal_colors = true,

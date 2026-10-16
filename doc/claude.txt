@@ -15,7 +15,7 @@ Run :colorscheme claude again to apply changed options.
 OPTIONS                                                      *claude-options*
 
 accent              'restrained'  'minimal', 'restrained', or 'expressive'
-transparent         false         Transparent editor and sidebar backgrounds
+transparent         true          Transparent editor and sidebar backgrounds
 italic_comments     true          Italic comments
 bold_keywords       true          Bold keywords
 terminal_colors     true          Set the built-in terminal ANSI palette
@@ -27,6 +27,8 @@ Expressive also accents function calls. Definitions require Tree-sitter or LSP
 declaration/definition modifiers; regex syntax uses neutral Function highlights
 unless accent is 'expressive'.
 
+Transparency is enabled by default. Set transparent=false for solid editor and
+sidebar backgrounds. The actual opacity is controlled by your terminal or GUI.
 Transparent mode retains opaque popups, status bars, and selections. The theme
 sets 'background' to dark and enables 'termguicolors'. It does not change layout,
 diagnostic settings, 'guicursor', or install/configure other plugins.

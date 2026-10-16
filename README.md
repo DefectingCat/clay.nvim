@@ -2,7 +2,7 @@
 
 以中性灰为主体、Clay 陶土色点缀的深色 Neovim 主题。
 
-采用 `#181818` 背景、`#D4D4D4` 正文与 `#D97757` 强调色。默认只为函数定义和当前操作位置添加 Clay；关键字、字符串、变量和函数调用通过灰阶区分。诊断、Diff、Git 状态同样保持灰阶。
+默认背景透明，沿用终端底色；关闭透明时使用 `#181818` 背景。正文采用 `#D4D4D4`，强调色为 `#D97757`。默认只为函数定义和当前操作位置添加 Clay；关键字、字符串、变量和函数调用通过灰阶区分。诊断、Diff、Git 状态同样保持灰阶。
 
 灵感来自 [Claude Design System 设计风格与动效体系总结](https://rua.plus/post/claude-design-system-style-and-motion) 中的配色与表面层级。这是独立社区主题。
 
@@ -63,7 +63,7 @@ vim.cmd.colorscheme("claude")
 ```lua
 require("claude").setup({
   accent = "restrained", -- "minimal" | "restrained" | "expressive"
-  transparent = false,
+  transparent = true,
   italic_comments = true,
   bold_keywords = true,
   terminal_colors = true,
@@ -82,7 +82,7 @@ vim.cmd.colorscheme("claude")
 
 定义与调用的区分依赖 Tree-sitter 的 capture 或 LSP 的 declaration/definition modifier。传统语法高亮无法可靠区分两者，因此默认 `Function` 保持灰色。LSP 的通用 function/method 高亮不会覆盖 Tree-sitter 的前景色。
 
-透明模式移除编辑区和侧栏底色，选区、状态栏与浮窗保留实色以保持层次。光标高亮是否显示取决于终端、前端和 `guicursor` 设置。
+透明模式默认开启，移除编辑区和侧栏底色，选区、状态栏与浮窗保留实色以保持层次。设置 `transparent = false` 可恢复主题实色背景。透明模式让终端背景透出，实际透明度由终端或前端设置决定。光标高亮是否显示取决于终端、前端和 `guicursor` 设置。
 
 `terminal_colors=true` 会为 Neovim 内置终端设置 16 色 ANSI 调色板，yellow/bright yellow 使用 Clay，其余使用灰阶。设为 `false` 可保留已有终端调色板；它不会撤销先前已经设置的终端颜色。
 
