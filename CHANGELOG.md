@@ -4,13 +4,27 @@
 
 ## [Unreleased]
 
+## [v0.2.0] - 2026-10-16
+
 ### 不兼容变化
 
-- 项目更名为 `clay.nvim`。`v0.1.0` 仍使用旧名称 `claude.nvim`，当前改名将在后续次版本发布，不改写已有标签。
+- 项目更名为 `clay.nvim`，从本版本起使用新接口；`v0.1.0` 保留旧名称 `claude.nvim`。
 - 配置入口从 `require("claude")` 改为 `require("clay")`，配色命令从 `:colorscheme claude` 改为 `:colorscheme clay`；lualine 的 `theme = "claude"` 改为 `theme = "clay"`。
 - 自定义高亮组前缀从 `Claude` 改为 `Clay`（例如 `ClaudeMode` → `ClayMode`），帮助入口从 `:help claude.txt` 改为 `:help clay.txt`，其他帮助标签也统一使用 `clay-` 前缀。
 - 预览和测试环境变量从 `CLAUDE_` 改为 `CLAY_`：`CLAY_ACCENT`、`CLAY_TREESITTER_DIR`、`CLAY_PREVIEW_RUNTIME`、`CLAY_PLUGIN_ROOTS`。
 - 旧入口不再提供；升级时同步修改主题配置、lualine 配置、自定义状态栏、高亮覆盖和脚本引用。配色和配置项保持原有行为。
+
+### 文档
+
+- 精简 README，提供 GitHub 安装配置、预览与验证命令；lazy.nvim 示例默认跟随稳定版本。
+- 新增 `AGENTS.md` 贡献指南，说明目录结构、代码风格与测试约定。
+
+### 发布验证
+
+- Neovim 0.10.4、0.12.5：各通过 13 项核心检查。
+- Neovim 0.12.5：九种语言的定义与调用在三档点缀下均通过检查，缺少 parser 时的回退检查通过。
+- 真实插件检查：0.12.5 通过 19 项，无跳过；0.10.4 通过 18 项，跳过要求 Neovim 0.11+ 的 nvim-lightbulb。
+- 插件检查覆盖初始化、主题重载、实色背景和自定义强调色，不代表完整插件功能的端到端验证；多语言检查仅在 0.12.5 上运行。
 
 ## [v0.1.0] - 2026-10-16
 

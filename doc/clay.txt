@@ -1,6 +1,6 @@
 *clay.txt*                clay.nvim — Grayscale and Clay for Neovim
 
-The development version is named clay.nvim. When upgrading from v0.1.0,
+Starting with v0.2.0, the theme is named clay.nvim. When upgrading from v0.1.0,
 replace the claude module/colorscheme/lualine theme with clay, the Claude
 highlight prefix with Clay, and the CLAUDE_ environment prefix with CLAY_.
 

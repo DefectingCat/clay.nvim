@@ -13,7 +13,7 @@
 ```lua
 {
   "DefectingCat/clay.nvim",
-  version = false,
+  version = "*",
   lazy = false,
   priority = 1000,
   opts = {},
@@ -24,7 +24,7 @@
 }
 ```
 
-`v0.1.0` 使用旧名称 `claude`，上例跟随当前分支。旧版升级见[迁移说明](CHANGELOG.md#unreleased)。
+上例安装最新稳定版。`v0.1.0` 使用旧名称 `claude`，升级前请参阅[迁移说明](CHANGELOG.md#v020---2026-10-16)。
 
 ## 配置
 

@@ -70,4 +70,4 @@ Git 标签是发布版本的权威来源。`CHANGELOG.md` 记录每次发布的�
 
 仓库尚未配置远程时，只创建本地标签。配置远程后，先推送发布提交，再单独推送对应标签；如使用 GitHub，可根据该标签创建 Release，说明取自对应的变更日志章节。只有提交和标签确实到达远程后，才称为远程发布完成。
 
-使用远程 Git 仓库安装时，lazy.nvim 支持 `tag = "v0.1.0"` 固定发行版，或 `version = "~0.1.0"` 选择 `0.1.x` 系列，具体见 [lazy.nvim 版本选项](https://lazy.folke.io/spec#spec-versioning)。`v0.1.0` 使用旧的 `claude.nvim` 名称与接口；当前 `clay.nvim` 改名属于不兼容变化，下次发布须递增次版本号，迁移方式见变更日志。本地 `dir` 安装使用目录当前内容，应自行切换该 checkout；添加版本选项不会替本地目录切换发布标签。
+使用远程 Git 仓库安装时，lazy.nvim 支持 `tag = "v0.2.0"` 固定发行版，或 `version = "~0.2.0"` 选择 `0.2.x` 系列，具体见 [lazy.nvim 版本选项](https://lazy.folke.io/spec#spec-versioning)。`v0.1.0` 使用旧的 `claude.nvim` 名称与接口，`v0.2.0` 起改为 `clay.nvim`；迁移方式见变更日志。本地 `dir` 安装使用目录当前内容，应自行切换该 checkout；添加版本选项不会替本地目录切换发布标签。
