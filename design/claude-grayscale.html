@@ -1,0 +1,304 @@
+<div id="claude-grayscale-preview">
+  <style>
+    #claude-grayscale-preview { --cn-bg: #181818; --cn-side: #141414; --cn-panel: #202020; --cn-line: #222222; --cn-select: #343434; --cn-border: #333333; --cn-fg: #d4d4d4; --cn-bright: #e6e6e6; --cn-secondary: #a8a8a8; --cn-comment: #8a8a8a; --cn-gutter: #686868; --cn-clay: #d97757; --cn-def: #d97757; --cn-call: #d4d4d4; --cn-warm-bg: #30231f; width: 100%; }
+    #claude-grayscale-preview * { box-sizing: border-box; }
+    #claude-grayscale-preview .cn-app { color: var(--cn-fg); background: var(--cn-bg); font: 13px/1.85 "JetBrains Mono", "Cascadia Code", "DejaVu Sans Mono", monospace; border: 1px solid var(--cn-border); border-radius: 8px; overflow: clip; }
+    #claude-grayscale-preview button { font: inherit; }
+    #claude-grayscale-preview .cn-titlebar { display: flex; align-items: center; gap: 12px; min-height: 45px; padding: 9px 110px 9px 18px; background: var(--cn-side); border-bottom: 1px solid var(--cn-line); }
+    #claude-grayscale-preview .cn-title { color: var(--cn-bright); letter-spacing: -.3px; }
+    #claude-grayscale-preview .cn-subtitle { color: var(--cn-comment); font: 12px/1.5 system-ui, sans-serif; }
+    #claude-grayscale-preview .cn-workspace { display: grid; grid-template-columns: 180px minmax(0, 1fr); min-height: 590px; }
+    #claude-grayscale-preview .cn-tree { background: var(--cn-side); border-right: 1px solid #2a2a2a; padding: 17px 0; }
+    #claude-grayscale-preview .cn-tree-title { padding: 0 18px 12px; color: var(--cn-secondary); }
+    #claude-grayscale-preview .cn-folder { color: var(--cn-secondary); padding: 0 18px; }
+    #claude-grayscale-preview .cn-file { width: 100%; display: block; text-align: left; color: var(--cn-comment); border: 0; background: transparent; padding: 3px 20px 3px 36px; }
+    #claude-grayscale-preview .cn-file[aria-pressed="true"] { background: var(--cn-line); color: var(--cn-fg); box-shadow: inset 2px 0 var(--cn-clay); }
+    #claude-grayscale-preview .cn-tree-sep { height: 18px; }
+    #claude-grayscale-preview .cn-main { position: relative; min-width: 0; }
+    #claude-grayscale-preview .cn-tabs { display: flex; flex-wrap: wrap; min-height: 40px; background: var(--cn-side); border-bottom: 1px solid var(--cn-line); }
+    #claude-grayscale-preview .cn-tab { padding: 7px 18px; border: 0; color: var(--cn-comment); background: transparent; border-top: 1px solid transparent; }
+    #claude-grayscale-preview .cn-tab[aria-pressed="true"] { color: var(--cn-bright); background: var(--cn-bg); border-top-color: var(--cn-clay); }
+    #claude-grayscale-preview .cn-breadcrumb { padding: 10px 22px 8px; color: var(--cn-comment); font-size: 12px; }
+    #claude-grayscale-preview .cn-lines { padding: 0 0 28px; }
+    #claude-grayscale-preview .cn-row { display: grid; grid-template-columns: 17px 35px minmax(0,1fr); min-height: 24px; padding-right: 16px; }
+    #claude-grayscale-preview .cn-row.cn-current { background: var(--cn-line); }
+    #claude-grayscale-preview .cn-number { color: var(--cn-gutter); text-align: right; padding-right: 13px; user-select: none; font-variant-numeric: tabular-nums; }
+    #claude-grayscale-preview .cn-current .cn-number { color: var(--cn-clay); }
+    #claude-grayscale-preview .cn-sign { text-align: center; color: var(--cn-secondary); }
+    #claude-grayscale-preview .cn-code { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    #claude-grayscale-preview .cn-keyword { color: var(--cn-bright); font-weight: 700; }
+    #claude-grayscale-preview .cn-comment { color: var(--cn-comment); font-style: italic; }
+    #claude-grayscale-preview .cn-string { color: var(--cn-secondary); }
+    #claude-grayscale-preview .cn-punct { color: var(--cn-secondary); }
+    #claude-grayscale-preview .cn-definition { color: var(--cn-def); }
+    #claude-grayscale-preview .cn-call { color: var(--cn-call); }
+    #claude-grayscale-preview .cn-constant { color: var(--cn-bright); }
+    #claude-grayscale-preview .cn-selected { background: var(--cn-select); color: var(--cn-bright); }
+    #claude-grayscale-preview .cn-cursor { background: var(--cn-clay); color: var(--cn-bg); }
+    #claude-grayscale-preview .cn-error { text-decoration: underline wavy var(--cn-bright); text-underline-offset: 4px; }
+    #claude-grayscale-preview .cn-virtual { color: var(--cn-comment); }
+    #claude-grayscale-preview .cn-added { background: #242424; }
+    #claude-grayscale-preview .cn-removed { background: #1c1c1c; color: var(--cn-secondary); }
+    #claude-grayscale-preview .cn-diff-head { color: var(--cn-bright); }
+    #claude-grayscale-preview .cn-status { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; min-height: 28px; background: var(--cn-panel); color: var(--cn-secondary); font-size: 12px; }
+    #claude-grayscale-preview .cn-status span { padding: 2px 12px; }
+    #claude-grayscale-preview .cn-status .cn-mode { color: var(--cn-bg); background: var(--cn-clay); font-weight: 700; }
+    #claude-grayscale-preview .cn-status .cn-status-file { flex: 1; color: var(--cn-fg); }
+    #claude-grayscale-preview .cn-command { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; min-height: 33px; padding: 3px 14px; color: var(--cn-comment); }
+    #claude-grayscale-preview .cn-command button { color: var(--cn-secondary); padding: 0; border: 0; background: transparent; text-align: left; }
+    #claude-grayscale-preview .cn-dialog { position: absolute; z-index: 2; background: var(--cn-panel); border: 1px solid #484848; border-radius: 3px; color: var(--cn-fg); }
+    #claude-grayscale-preview .cn-dialog[hidden] { display: none; }
+    #claude-grayscale-preview .cn-completion { top: 238px; left: 31%; width: min(330px, 65%); padding: 5px 0; }
+    #claude-grayscale-preview .cn-option { padding: 2px 13px; display: flex; justify-content: space-between; gap: 8px; }
+    #claude-grayscale-preview .cn-option-selected { background: var(--cn-select); color: var(--cn-bright); }
+    #claude-grayscale-preview .cn-option-kind { color: var(--cn-comment); }
+    #claude-grayscale-preview .cn-option-selected .cn-option-kind { color: var(--cn-secondary); }
+    #claude-grayscale-preview .cn-popup-foot { border-top: 1px solid var(--cn-border); margin-top: 5px; padding: 6px 13px 2px; color: var(--cn-comment); font-size: 12px; }
+    #claude-grayscale-preview .cn-match { color: var(--cn-clay); }
+    #claude-grayscale-preview .cn-search { top: 112px; left: 9%; width: 82%; padding: 12px; }
+    #claude-grayscale-preview .cn-search-heading { color: var(--cn-clay); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    #claude-grayscale-preview .cn-search-heading button { background: transparent; color: var(--cn-comment); border: 0; padding: 2px 4px; }
+    #claude-grayscale-preview .cn-search input { width: 100%; background: var(--cn-bg); color: var(--cn-fg); border: 0; padding: 7px 10px; font: inherit; border-bottom: 1px solid var(--cn-border); margin-bottom: 7px; }
+    #claude-grayscale-preview .cn-result { display: block; width: 100%; color: var(--cn-fg); background: transparent; border: 0; text-align: left; padding: 4px 10px; overflow-wrap: anywhere; }
+    #claude-grayscale-preview .cn-result:first-child { background: var(--cn-select); }
+    #claude-grayscale-preview .cn-result:first-child .cn-match { color: var(--cn-bright); text-decoration: underline; text-decoration-color: var(--cn-clay); }
+    #claude-grayscale-preview .cn-empty { color: var(--cn-comment); padding: 8px 10px; }
+    #claude-grayscale-preview .cn-palette { display: flex; flex-wrap: wrap; gap: 12px 22px; padding: 14px 0 0; font: 12px/1.5 system-ui, sans-serif; color: inherit; }
+    #claude-grayscale-preview .cn-swatch { display: flex; align-items: center; gap: 7px; }
+    #claude-grayscale-preview .cn-chip { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #88888866; }
+    @media (max-width: 720px) {
+      #claude-grayscale-preview .cn-workspace { grid-template-columns: minmax(0, 1fr); min-height: 590px; }
+      #claude-grayscale-preview .cn-tree { display: none; }
+    }
+    @media (max-width: 440px) {
+      #claude-grayscale-preview .cn-app { font-size: 12px; }
+      #claude-grayscale-preview .cn-titlebar { flex-wrap: wrap; gap: 2px 10px; padding-left: 12px; }
+      #claude-grayscale-preview .cn-tab { padding: 7px 12px; }
+      #claude-grayscale-preview .cn-breadcrumb { padding-left: 15px; }
+      #claude-grayscale-preview .cn-row { grid-template-columns: 13px 29px minmax(0,1fr); padding-right: 8px; }
+      #claude-grayscale-preview .cn-number { padding-right: 8px; }
+      #claude-grayscale-preview .cn-status span { padding: 2px 8px; }
+      #claude-grayscale-preview .cn-status .cn-encoding { display: none; }
+      #claude-grayscale-preview .cn-completion { left: 17%; width: 79%; }
+      #claude-grayscale-preview .cn-search { left: 3%; width: 94%; }
+    }
+    @media (pointer: coarse) {
+      #claude-grayscale-preview .cn-tab, #claude-grayscale-preview .cn-result, #claude-grayscale-preview .cn-command button, #claude-grayscale-preview .cn-search-heading button { min-height: 44px; }
+      #claude-grayscale-preview .cn-search input { font-size: 16px; }
+    }
+  </style>
+  <div class="cn-app" aria-label="Claude grayscale 深色 Neovim 主题设计预览">
+    <div class="cn-titlebar"><span class="cn-title">claude.nvim</span><span class="cn-subtitle">grayscale / clay · 设计预览</span></div>
+    <div class="cn-workspace">
+      <aside class="cn-tree" aria-label="示例文件">
+        <div class="cn-tree-title">▾ claude.nvim</div>
+        <div class="cn-folder">▾ lua</div>
+        <button type="button" class="cn-file cursor-interaction" data-buffer="lua" aria-pressed="true">init.lua</button>
+        <div class="cn-tree-sep"></div>
+        <div class="cn-folder">▾ examples</div>
+        <button type="button" class="cn-file cursor-interaction" data-buffer="ts" aria-pressed="false">client.ts</button>
+        <button type="button" class="cn-file cursor-interaction" data-buffer="diff" aria-pressed="false">review.diff</button>
+      </aside>
+      <main class="cn-main">
+        <nav class="cn-tabs" aria-label="预览缓冲区">
+          <button type="button" class="cn-tab cursor-interaction" data-buffer="lua" aria-pressed="true">init.lua</button>
+          <button type="button" class="cn-tab cursor-interaction" data-buffer="ts" aria-pressed="false">client.ts</button>
+          <button type="button" class="cn-tab cursor-interaction" data-buffer="diff" aria-pressed="false">review.diff</button>
+        </nav>
+        <div class="cn-breadcrumb">lua / init.lua</div>
+        <div class="cn-lines" aria-label="示例代码"></div>
+        <div class="cn-dialog cn-completion" aria-label="补全菜单配色示意" hidden>
+          <div class="cn-option cn-option-selected"><span>▸ setup</span><span class="cn-option-kind">Function</span></div>
+          <div class="cn-option"><span>  <span class="cn-match">se</span>lect</span><span class="cn-option-kind">Function</span></div>
+          <div class="cn-option"><span>  <span class="cn-match">se</span>t_hl</span><span class="cn-option-kind">Function</span></div>
+          <div class="cn-popup-foot">setup(opts) → nil</div>
+        </div>
+        <section class="cn-dialog cn-search" aria-label="查找示例文件" hidden>
+          <div class="cn-search-heading"><span>Find files</span><button class="cursor-interaction" type="button" data-close-search aria-label="关闭文件查找">Esc</button></div>
+          <input aria-label="按文件名筛选" placeholder="›  查找文件" autocomplete="off" spellcheck="false">
+          <div class="cn-results"></div>
+        </section>
+      </main>
+    </div>
+    <div class="cn-status"><span class="cn-mode">NORMAL</span><span>⑂ main</span><span class="cn-status-file">lua/init.lua</span><span class="cn-encoding">utf-8</span><span class="cn-filetype">lua</span><span class="cn-location">8:5</span></div>
+    <div class="cn-command"><button class="cursor-interaction" type="button" data-open-search>:Telescope find_files</button><span class="cn-scene-label">克制点缀</span></div>
+  </div>
+  <div class="cn-palette" aria-label="主题核心色板">
+    <span class="cn-swatch"><span class="cn-chip" style="background:#181818"></span>Canvas #181818</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#343434"></span>Selection #343434</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#8a8a8a"></span>Comment #8A8A8A</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#d4d4d4"></span>Text #D4D4D4</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#d97757"></span>Clay #D97757</span>
+  </div>
+  <script>
+    (() => {
+      const root = document.getElementById('claude-grayscale-preview');
+      const app = root.querySelector('.cn-app');
+      const state = { intensity: 'restrained', scene: 'editing', italics: true, buffer: 'lua' };
+      const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const token = (type, text) => '<span class="cn-' + type + '">' + escape(text) + '</span>';
+      const k = text => token('keyword', text);
+      const s = text => token('string', text);
+      const c = text => token('comment', text);
+      const d = text => token('definition', text);
+      const f = text => token('call', text);
+      const p = text => token('punct', text);
+      const n = text => token('constant', text);
+      const buffers = {
+        lua: { file: 'lua/init.lua', type: 'lua', current: 8, lines: [
+          c('-- Quiet surfaces. A little clay.'),
+          k('local') + ' M ' + p('= {}'),
+          '',
+          k('local') + ' defaults ' + p('= {'),
+          '  background ' + p('= ') + s('"dark"') + p(','),
+          '  accent ' + p('= ') + s('"#d97757"') + p(','),
+          '  contrast ' + p('= ') + s('"soft"') + p(','),
+          '  ' + token('cursor', 'i') + 'talics ' + p('= ') + n('true') + p(','),
+          p('}'),
+          '',
+          k('function') + ' M.' + d('setup') + p('(') + 'opts' + p(')'),
+          '  opts ' + p('= ') + 'opts ' + k('or') + p(' {}'),
+          '  ' + k('local') + ' config ' + p('= ') + 'vim.' + f('tbl_extend') + p('('),
+          '    ' + s('"force"') + p(', ') + 'defaults' + p(', ') + 'opts',
+          '  ' + p(')'),
+          '',
+          '  ' + c('-- Let the code do the talking.'),
+          '  ' + k('if') + ' config.italics ' + k('then'),
+          '    M.' + f('apply_comments') + p('(') + 'config' + p(')'),
+          '  ' + k('end'),
+          '  ' + k('return') + ' config',
+          k('end'),
+          '',
+          k('return') + ' M'
+        ]},
+        ts: { file: 'examples/client.ts', type: 'typescript', current: 12, lines: [
+          c('// A small client, in grayscale.'),
+          k('type') + ' Message ' + p('= {'),
+          '  role' + p(': ') + s('"user"') + p(' | ') + s('"assistant"'),
+          '  content' + p(': ') + n('string'),
+          p('}'),
+          '',
+          k('export async function') + ' ' + d('sendMessage') + p('('),
+          '  messages' + p(': ') + 'Message' + p('[]'),
+          p(') {'),
+          '  ' + k('const') + ' response ' + p('= ') + k('await') + ' ' + f('fetch') + p('('),
+          '    ' + s('"/api/messages"') + p(', {'),
+          '      method' + p(': ') + s('"POST"') + p(','),
+          '      body' + p(': ') + 'JSON.' + f('stringify') + p('(') + 'messages' + p('),'),
+          '    ' + p('}'),
+          '  ' + p(')'),
+          '',
+          '  ' + k('if') + p(' (!') + 'response.ok' + p(') {'),
+          '    ' + k('throw new') + ' ' + f('Error') + p('(') + s('"Request failed"') + p(')'),
+          '  ' + p('}'),
+          '',
+          '  ' + k('return') + ' response.' + f('json') + p('()'),
+          p('}'),
+          '',
+          k('const') + ' retries' + p(': ') + n('number') + p(' = ') + '<span class="cn-error">' + s('"3"') + '</span>' + '  ' + token('virtual', 'E 2322: expected number')
+        ]},
+        diff: { file: 'examples/review.diff', type: 'diff', current: 8, lines: [
+          token('diff-head', 'diff --git a/config.lua b/config.lua'),
+          c('--- a/config.lua'),
+          c('+++ b/config.lua'),
+          token('diff-head', '@@ -1,8 +1,9 @@'),
+          ' ' + k('return') + p(' {'),
+          '-  background ' + p('= ') + s('"light"') + p(','),
+          '+  background ' + p('= ') + s('"dark"') + p(','),
+          '+  accent ' + p('= ') + s('"#d97757"') + p(','),
+          '   contrast ' + p('= ') + s('"soft"') + p(','),
+          '-  colorful_syntax ' + p('= ') + n('true') + p(','),
+          '+  colorful_syntax ' + p('= ') + n('false') + p(','),
+          '   italics ' + p('= ') + n('true') + p(','),
+          ' ' + p('}'),
+          '',
+          c('--- Diagnostics · grayscale ---'),
+          '',
+          token('constant', 'E') + '  client.ts:24   Type mismatch',
+          token('string', 'W') + '  client.ts:24   Unused variable',
+          token('string', 'I') + '  config.lua:6   Default applied',
+          token('comment', 'H') + '  config.lua:7   Simplify expression',
+          '',
+          c('--- Visual selection ---'),
+          '',
+          '  ' + token('selected', 'contrast = "soft",')
+        ]}
+      };
+      const names = { restrained: '克制点缀', ui: '仅界面点缀', expressive: '函数定义与调用点缀' };
+      const search = root.querySelector('.cn-search');
+      const input = search.querySelector('input');
+      const results = root.querySelector('.cn-results');
+      function save() {
+        if (window.openai?.setWidgetState) window.openai.setWidgetState({ modelContent: { intensity: state.intensity, italics: state.italics }, privateContent: { buffer: state.buffer, scene: state.scene } }).catch(() => {});
+      }
+      function renderResults() {
+        const query = input.value.trim().toLowerCase();
+        const found = Object.entries(buffers).filter(([, b]) => b.file.toLowerCase().includes(query));
+        results.innerHTML = found.length ? found.map(([key, b]) => {
+          const index = b.file.toLowerCase().indexOf(query);
+          const label = query ? escape(b.file.slice(0, index)) + token('match', b.file.slice(index, index + query.length)) + escape(b.file.slice(index + query.length)) : escape(b.file);
+          return '<button type="button" class="cn-result cursor-interaction" data-result="' + key + '">› ' + label + '</button>';
+        }).join('') : '<div class="cn-empty">No matching files</div>';
+      }
+      function render() {
+        root.style.setProperty('--cn-def', state.intensity === 'ui' ? '#e6e6e6' : '#d97757');
+        root.style.setProperty('--cn-call', state.intensity === 'expressive' ? '#d97757' : '#d4d4d4');
+        const buffer = buffers[state.buffer];
+        root.querySelectorAll('[data-buffer]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.buffer === state.buffer)));
+        root.querySelector('.cn-breadcrumb').textContent = buffer.file.replaceAll('/', ' / ');
+        root.querySelector('.cn-lines').innerHTML = buffer.lines.map((line, i) => {
+          const number = i + 1;
+          const added = state.buffer === 'diff' && [7,8,11].includes(number);
+          const removed = state.buffer === 'diff' && [6,10].includes(number);
+          const error = state.buffer === 'ts' && number === 24;
+          const sign = error ? 'E' : added ? '+' : removed ? '−' : '';
+          return '<div class="cn-row' + (number === buffer.current ? ' cn-current' : '') + (added ? ' cn-added' : removed ? ' cn-removed' : '') + '"><span class="cn-sign">' + sign + '</span><span class="cn-number">' + number + '</span><span class="cn-code">' + (line || ' ') + '</span></div>';
+        }).join('');
+        root.querySelectorAll('.cn-comment').forEach(comment => comment.style.fontStyle = state.italics ? 'italic' : 'normal');
+        root.querySelector('.cn-status-file').textContent = buffer.file;
+        root.querySelector('.cn-filetype').textContent = buffer.type;
+        root.querySelector('.cn-location').textContent = buffer.current + ':5';
+        root.querySelector('.cn-mode').textContent = state.scene === 'completion' ? 'INSERT' : 'NORMAL';
+        root.querySelector('.cn-scene-label').textContent = names[state.intensity];
+        root.querySelector('.cn-completion').hidden = state.scene !== 'completion';
+        search.hidden = state.scene !== 'search';
+        renderResults();
+      }
+      function restore(snapshot) {
+        const m = snapshot?.modelContent || {};
+        const u = snapshot?.privateContent || {};
+        if (Object.hasOwn(names, m.intensity)) state.intensity = m.intensity;
+        if (typeof m.italics === 'boolean') state.italics = m.italics;
+        if (Object.hasOwn(buffers, u.buffer)) state.buffer = u.buffer;
+        if (['editing', 'completion', 'search'].includes(u.scene)) state.scene = u.scene;
+      }
+      root.addEventListener('click', event => {
+        const button = event.target.closest('button');
+        if (!button) return;
+        if (button.dataset.buffer || button.dataset.result) { state.buffer = button.dataset.buffer || button.dataset.result; state.scene = 'editing'; }
+        else if (button.hasAttribute('data-open-search')) state.scene = 'search';
+        else if (button.hasAttribute('data-close-search')) state.scene = 'editing';
+        else return;
+        render(); save();
+        if (state.scene === 'search') input.focus();
+        if (button.hasAttribute('data-close-search') || button.dataset.result) root.querySelector('[data-open-search]').focus();
+      });
+      input.addEventListener('input', renderResults);
+      search.addEventListener('keydown', event => {
+        if (event.key === 'Escape') { state.scene = 'editing'; render(); save(); root.querySelector('[data-open-search]').focus(); }
+        if (event.key === 'Enter' && event.target === input) results.querySelector('button')?.click();
+      });
+      window.addEventListener('openai:set_globals', event => {
+        if (event.detail?.globals?.widgetState) { restore(event.detail.globals.widgetState); render(); }
+      });
+      restore(window.openai?.widgetState);
+      render();
+      if (globalThis.Tweak) {
+        const tweak = new Tweak({ container: app, onChange: () => { render(); save(); } });
+        tweak.addSelect(state, 'intensity', { label: 'Clay 点缀范围', options: [{ label: '克制 · 仅函数定义', value: 'restrained' }, { label: '极简 · 仅界面', value: 'ui' }, { label: '明显 · 函数定义与调用', value: 'expressive' }] });
+        tweak.addSelect(state, 'scene', { label: '预览场景', options: [{ label: '日常编辑', value: 'editing' }, { label: '自动补全', value: 'completion' }, { label: '文件查找', value: 'search' }] });
+        tweak.addToggle(state, 'italics', { label: '注释斜体' });
+      }
+    })();
+  </script>
+</div>
