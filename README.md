@@ -2,9 +2,22 @@
 
 以中性灰为主体、Clay 陶土色点缀的深色 Neovim 主题。
 
-默认背景透明，沿用终端底色；关闭透明时使用 `#111315`（RGB 17, 19, 21）背景。正文采用 `#D4D4D4`，强调色为 `#D97757`。默认只为函数定义和当前操作位置添加 Clay；关键字、字符串、变量和函数调用通过灰阶区分。诊断、Diff、Git 状态同样保持灰阶。
+默认背景透明，沿用终端底色；关闭透明时使用 `#111315`（RGB 17, 19, 21）背景。正文采用 `#CCCCCC`，强调色为 `#D97757`。默认只为函数定义和当前操作位置添加 Clay；关键字、字符串、变量和函数调用通过灰阶区分。诊断、Diff、Git 状态同样保持灰阶。
 
 灵感来自 [Claude Design System 设计风格与动效体系总结](https://rua.plus/post/claude-design-system-style-and-motion) 中的配色与表面层级。这是独立社区主题。
+
+灰阶层级参考 [lackluster.nvim](https://github.com/slugbyte/lackluster.nvim/tree/70dd682e564784893b984deb51dd5ddd263c8cc7)：让变量与类型名更突出，弱化关键字、调用和标点，默认不加粗关键字。保留 Claude 的 Clay 作为唯一强调色，注释则提高亮度以方便阅读。
+
+| 用途 | 默认颜色 |
+| --- | --- |
+| 正文、变量、类型定义 | `#CCCCCC` |
+| 成员、常量、类型 | `#AAAAAA` |
+| 参数、关键字、字符串、函数调用 | `#8E8E8E` |
+| 注释、标点、运算符 | `#7A7A7A` |
+| 函数定义、焦点、模式标记 | `#D97757` Clay |
+| 浮窗 / 状态栏 / 选区 | `#1A1A1A` / `#242424` / `#2A2A2A` |
+
+以上语法层级以 Tree-sitter 为准；点缀范围也可通过下面的 `accent` 选项切换。
 
 ## 直接预览
 
@@ -65,7 +78,7 @@ require("claude").setup({
   accent = "restrained", -- "minimal" | "restrained" | "expressive"
   transparent = true,
   italic_comments = true,
-  bold_keywords = true,
+  bold_keywords = false,
   terminal_colors = true,
   palette = {},
   overrides = {},
@@ -160,4 +173,4 @@ make test
 
 测试需要 Lua Tree-sitter parser，检查加载与重载、三档点缀、灰阶约束、链接有效性、透明背景、配置覆盖、终端色板、lualine 数据和真实 Lua 定义/调用 capture。测试在独立 Neovim 进程运行，不加载个人配置。
 
-已在 Neovim 0.10.4 和 0.12.5 上通过全部 12 项检查。部分插件高亮名称已对照上游源码核对；尚未逐一运行完整的第三方插件组合。
+已在 Neovim 0.10.4 和 0.12.5 上通过全部 13 项检查，包含灰阶明暗层级与 Clay 焦点。部分插件高亮名称已对照上游源码核对；尚未逐一运行完整的第三方插件组合。

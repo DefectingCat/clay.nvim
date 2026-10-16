@@ -1,8 +1,8 @@
 local c = require("claude").get_palette()
 local active = {
   a = { fg = c.bg, bg = c.clay, gui = "bold" },
-  b = { fg = c.fg, bg = c.selection },
-  c = { fg = c.secondary, bg = c.float },
+  b = { fg = c.secondary, bg = c.statusline },
+  c = { fg = c.secondary, bg = c.statusline },
 }
 
 return {
