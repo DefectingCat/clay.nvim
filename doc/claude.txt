@@ -27,8 +27,9 @@ Expressive also accents function calls. Definitions require Tree-sitter or LSP
 declaration/definition modifiers; regex syntax uses neutral Function highlights
 unless accent is 'expressive'.
 
-Transparency is enabled by default. Set transparent=false for solid editor and
-sidebar backgrounds. The actual opacity is controlled by your terminal or GUI.
+Transparency is enabled by default. Set transparent=false for a solid #111315
+editor background (RGB 17, 19, 21) and solid sidebar backgrounds. The actual
+opacity is controlled by your terminal or GUI.
 Transparent mode retains opaque popups, status bars, and selections. The theme
 sets 'background' to dark and enables 'termguicolors'. It does not change layout,
 diagnostic settings, 'guicursor', or install/configure other plugins.

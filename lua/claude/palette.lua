@@ -1,6 +1,6 @@
--- Neutral surfaces and text; Clay is the only chromatic accent.
+-- Neutral surfaces and text, a cool near-black canvas, and Clay accents.
 return {
-  bg = "#181818",
+  bg = "#111315",
   sidebar = "#141414",
   float = "#202020",
   cursorline = "#222222",

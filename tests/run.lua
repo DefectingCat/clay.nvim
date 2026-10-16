@@ -74,7 +74,7 @@ local function run()
     equal(hl("@function.call").fg, color(colors.fg))
   end)
 
-  test("every theme-owned color is neutral gray or Clay and every link resolves", function()
+  test("colors stay grayscale apart from the canvas and Clay and every link resolves", function()
     local groups = vim.tbl_extend("force", require("claude.highlights").get(colors, theme.get_options()), require("claude.integrations").get(colors, theme.get_options()))
     for name, spec in pairs(groups) do
       if spec.link then
@@ -88,7 +88,7 @@ local function run()
       end
       for _, key in ipairs({ "fg", "bg", "sp" }) do
         local value = hl(name)[key]
-        if value and value ~= color(colors.clay) then
+        if value and value ~= color(colors.clay) and value ~= color(colors.bg) then
           local r, g, b = math.floor(value / 65536), math.floor(value / 256) % 256, value % 256
           assert(r == g and g == b, name .. " contains a chromatic " .. key)
         end
@@ -101,6 +101,7 @@ local function run()
 
   test("background defaults to transparent and can switch to opaque and back", function()
     load()
+    equal(theme.get_palette().bg, "#111315")
     for _, name in ipairs({ "Normal", "NormalNC", "SignColumn", "FoldColumn", "WinBar", "MsgArea", "NeoTreeNormal", "NeoTreeNormalNC", "NvimTreeNormal", "NvimTreeNormalNC" }) do
       equal(hl(name).bg, nil, name .. " should be transparent by default")
     end
