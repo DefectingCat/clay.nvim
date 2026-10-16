@@ -1,0 +1,73 @@
+*claude.txt*              Grayscale and Clay for Neovim
+
+==============================================================================
+SETUP                                                          *claude-setup*
+
+Add this repository to 'runtimepath' or install it with a plugin manager.
+Requires Neovim 0.10.4+ and a true-color terminal.
+>
+    lua require('claude').setup({ accent = 'restrained' })
+    colorscheme claude
+<
+setup() is optional. Each call replaces configuration using the defaults below.
+Run :colorscheme claude again to apply changed options.
+
+OPTIONS                                                      *claude-options*
+
+accent              'restrained'  'minimal', 'restrained', or 'expressive'
+transparent         false         Transparent editor and sidebar backgrounds
+italic_comments     true          Italic comments
+bold_keywords       true          Bold keywords
+terminal_colors     true          Set the built-in terminal ANSI palette
+palette             {}            Override named #RRGGBB colors
+overrides           {}            Highlight table or function(colors, options)
+
+Minimal accents only the UI. Restrained also accents function definitions.
+Expressive also accents function calls. Definitions require Tree-sitter or LSP
+declaration/definition modifiers; regex syntax uses neutral Function highlights
+unless accent is 'expressive'.
+
+Transparent mode retains opaque popups, status bars, and selections. The theme
+sets 'background' to dark and enables 'termguicolors'. It does not change layout,
+diagnostic settings, 'guicursor', or install/configure other plugins.
+
+Terminal colors are grayscale except yellow/bright yellow, which use Clay.
+terminal_colors=false leaves the existing palette untouched (does not restore a
+previous palette).
+
+Palette keys: bg, sidebar, float, cursorline, selection, border, float_border,
+fg, bright, secondary, comment, gutter, clay, diff_add, diff_delete.
+
+Override entries replace complete highlights, including links. An empty table
+clears a highlight. The callback must return a highlight table.
+>
+    require('claude').setup({
+      overrides = function(c)
+        return { Comment = { fg = c.secondary } }
+      end,
+    })
+<
+get_palette() and get_options() return copies of the active configuration.
+
+INTEGRATIONS                                            *claude-integrations*
+
+Telescope, Snacks picker/dashboard/indent, nvim-cmp, blink.cmp, Neo-tree,
+nvim-tree, Gitsigns, which-key, indent-blankline, mini.statusline, mini.tabline,
+and mini.indentscope have highlight mappings. Plugins can add or override
+groups; file icons can use separate third-party colors.
+
+Configure lualine after claude.setup():
+>
+    require('lualine').setup({ options = { theme = 'claude' } })
+<
+For a custom statusline: ClaudeMode is a Clay block, ClaudeAccent is Clay text,
+and ClaudeMuted is secondary text. The theme does not set your statusline.
+
+PREVIEW                                                       *claude-preview*
+
+From the repository directory run `make preview`. This uses an isolated demo
+configuration and works over SSH. Exit with :q!. Set CLAUDE_ACCENT=minimal or
+CLAUDE_ACCENT=expressive to compare alternatives. Run `make test` for checks;
+the tests require a Lua Tree-sitter parser.
+
+ vim:tw=78:ts=8:ft=help:norl:
