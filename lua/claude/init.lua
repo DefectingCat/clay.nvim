@@ -68,6 +68,7 @@ function M.load()
   local colors = M.get_palette()
   local opts = M.get_options()
   local groups = require("claude.highlights").get(colors, opts)
+  groups = vim.tbl_extend("force", groups, require("claude.integrations").get(colors, opts))
   local overrides = opts.overrides
   if type(overrides) == "function" then
     overrides = overrides(vim.deepcopy(colors), vim.deepcopy(opts))
