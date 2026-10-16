@@ -37,6 +37,19 @@ CLAUDE_ACCENT=expressive make preview
 
 预览使用独立配置与 `examples/demo.lua`，启用行号、当前行、状态栏和一条示例诊断。同目录还有 Rust、Go、Python、TypeScript、C、C++ 和 Java 样例，预览会话里用 `:edit examples/demo.rs` 这类路径打开。有对应 Tree-sitter parser 时优先使用；未安装时回退到传统语法高亮。
 
+首次查看多语言效果，先准备仓库专用的 parser 和查询文件，再打开对应文件：
+
+```bash
+make preview-parsers
+make preview FILE=examples/demo.py
+make preview FILE=examples/demo.rs
+make test-languages
+```
+
+准备命令需要 Neovim 0.12+、当前版本的 nvim-treesitter、tree-sitter CLI 0.26.1+、C 编译器、curl 和 tar。默认使用已安装的 `~/.local/share/nvim/lazy/nvim-treesitter`；其他路径可用 `CLAUDE_TREESITTER_DIR=/path/to/nvim-treesitter make preview-parsers` 指定。它下载并编译 Lua、C、C++、Go、Java、Python、Rust、JavaScript、TypeScript 的 parser，把结果放在 Git 忽略的 `.preview/site`，不修改个人 Neovim 配置或 parser 安装目录。
+
+预览状态栏显示 `Tree-sitter` 或 `regex`。出现 `regex` 表示未能启用语法解析，`:messages` 会显示具体原因；此时函数定义可能没有 Clay。隔离预览不会自动加载个人插件和 parser。主题本身仍支持 Neovim 0.10.4+，旧版预览使用 Neovim 自带的 parser；也可通过 `CLAUDE_PREVIEW_RUNTIME` 指定冒号分隔、含兼容 parser 和查询文件的 runtime 目录。
+
 `design/claude-grayscale.html` 保留最初的交互设计稿；`make preview` 展示实际主题。
 
 ## 安装
@@ -94,6 +107,8 @@ vim.cmd.colorscheme("claude")
 | `expressive` | Clay | Clay | Clay |
 
 定义与调用的区分依赖 Tree-sitter 的 capture 或 LSP 的 declaration/definition modifier。传统语法高亮无法可靠区分两者，因此默认 `Function` 保持灰色。LSP 的通用 function/method 高亮不会覆盖 Tree-sitter 的前景色。
+
+这套高亮适用于各语言的 `@function` / `@function.method` 等 capture，并非只支持 Lua。在自己的 Neovim 配置中，需要安装目标语言的 parser 和查询文件，并启用 Tree-sitter 高亮，具体配置参见 [nvim-treesitter 的高亮说明](https://github.com/nvim-treesitter/nvim-treesitter#highlighting)。`make preview-parsers` 仅为仓库预览准备依赖，不会替个人配置安装 parser。
 
 透明模式默认开启，移除编辑区和侧栏底色，选区、状态栏与浮窗保留实色以保持层次。设置 `transparent = false` 可恢复主题实色背景。透明模式让终端背景透出，实际透明度由终端或前端设置决定。光标高亮是否显示取决于终端、前端和 `guicursor` 设置。
 

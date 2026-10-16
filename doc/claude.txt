@@ -94,6 +94,22 @@ configuration and works over SSH. Exit with :q!. Set CLAUDE_ACCENT=minimal or
 CLAUDE_ACCENT=expressive to compare alternatives. Run `make test` for checks;
 the tests require a Lua Tree-sitter parser.
 
+Run `make preview-parsers` once for multilingual previews (Neovim 0.12+, current
+nvim-treesitter, tree-sitter CLI 0.26.1+, cc, curl, tar required). Parsers and
+queries are installed into .preview/site in the repository, not your personal
+Neovim installation. CLAUDE_TREESITTER_DIR overrides the installer checkout;
+its default is stdpath('data') .. '/lazy/nvim-treesitter'.
+
+Use `make preview FILE=examples/demo.py` or :edit to change languages. The
+statusline reports Tree-sitter or regex; :messages explains fallback errors.
+Without a parser AND highlights query, function definitions may remain gray.
+Run `make test-languages` to verify definition/call colors in nine languages.
+
+CLAUDE_PREVIEW_RUNTIME accepts colon-separated runtime directories with parsers
+and queries and overrides the preview cache path. Neovim older than 0.12 uses
+bundled parsers unless this variable supplies compatible ones. No personal
+configuration or plugin setup is loaded by the preview.
+
 examples/demo.lua is the preview buffer. The same directory also has Rust, Go,
 Python, TypeScript, C, C++, and Java samples. Open one from the preview
 session with :edit. A matching Tree-sitter parser is used when installed.

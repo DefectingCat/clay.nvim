@@ -21,16 +21,24 @@ local function check_token(buf, lines, row, definition, expected)
   local col = assert(lines[row + 1]:find("greet", 1, true)) - 1
   local captures = vim.treesitter.get_captures_at_pos(buf, row, col)
   local found = false
+  local foreground, priority = nil, -1
   for _, item in ipairs(captures) do
+    local group = "@" .. item.capture .. "." .. item.lang
+    local fg = vim.api.nvim_get_hl(0, { name = group, link = false }).fg
+    local metadata = item.metadata or {}
+    local rank = tonumber(metadata.priority or (metadata[item.id] or {}).priority) or 100
+    if fg and rank >= priority then
+      foreground, priority = fg, rank
+    end
     local is_function = item.capture:match("^function") ~= nil
     local is_call = item.capture:find("call", 1, true) ~= nil
     if is_function and (definition ~= is_call) then
       found = true
-      local fg = vim.api.nvim_get_hl(0, { name = "@" .. item.capture, link = false }).fg
       assert(fg == expected, item.capture .. " has wrong foreground")
     end
   end
   assert(found, "Missing " .. (definition and "definition" or "call") .. " capture: " .. vim.inspect(captures))
+  assert(foreground == expected, "Another capture overrode the function color: " .. vim.inspect(captures))
 end
 
 local function run()
@@ -44,6 +52,7 @@ local function run()
     local ok, err = preview.start(buf)
     assert(ok, ft .. ": " .. tostring(err) .. "\nRun make preview-parsers first")
     assert(vim.b[buf].claude_preview_highlighter == "Tree-sitter")
+    assert(vim.b[buf].claude_preview_error == nil)
     for _, accent in ipairs({ "restrained", "minimal", "expressive" }) do
       theme.setup({ accent = accent })
       vim.cmd.colorscheme("claude")

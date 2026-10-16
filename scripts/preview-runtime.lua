@@ -32,7 +32,7 @@ function M.start(buf)
     vim.treesitter.start(buf, lang)
   end)
   vim.b[buf].claude_preview_highlighter = ok and "Tree-sitter" or "regex"
-  vim.b[buf].claude_preview_error = ok and nil or tostring(err)
+  vim.b[buf].claude_preview_error = not ok and tostring(err) or nil
   if not ok then
     pcall(vim.treesitter.stop, buf)
     vim.bo[buf].syntax = ft
