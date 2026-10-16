@@ -5,9 +5,9 @@ local function run()
   for _, tool in ipairs({ "tree-sitter", "cc", "curl", "tar" }) do
     assert(vim.fn.executable(tool) == 1, "preview-parsers requires " .. tool)
   end
-  local treesitter = vim.env.CLAUDE_TREESITTER_DIR or (vim.fn.stdpath("data") .. "/lazy/nvim-treesitter")
+  local treesitter = vim.env.CLAY_TREESITTER_DIR or (vim.fn.stdpath("data") .. "/lazy/nvim-treesitter")
   assert(vim.fn.filereadable(treesitter .. "/lua/nvim-treesitter/install.lua") == 1,
-    "Set CLAUDE_TREESITTER_DIR to a current nvim-treesitter checkout")
+    "Set CLAY_TREESITTER_DIR to a current nvim-treesitter checkout")
   vim.opt.runtimepath = { treesitter, vim.env.VIMRUNTIME }
   vim.opt.packpath = {}
   vim.opt.loadplugins = false

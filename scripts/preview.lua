@@ -2,8 +2,8 @@
 local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h")
 local preview = dofile(root .. "/scripts/preview-runtime.lua")
 preview.configure(root)
-require("claude").setup({ accent = vim.env.CLAUDE_ACCENT or "restrained" })
-vim.cmd.colorscheme("claude")
+require("clay").setup({ accent = vim.env.CLAY_ACCENT or "restrained" })
+vim.cmd.colorscheme("clay")
 vim.opt.number = true
 vim.opt.cursorline = true
 vim.opt.signcolumn = "yes"
@@ -13,7 +13,7 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.guicursor = "n-v-c:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor"
-vim.opt.statusline = "%#ClaudeMode# %{mode()} %#StatusLine# %f %m %= %{get(b:, 'claude_preview_highlighter', 'plain')}  %y  %l:%c "
+vim.opt.statusline = "%#ClayMode# %{mode()} %#StatusLine# %f %m %= %{get(b:, 'clay_preview_highlighter', 'plain')}  %y  %l:%c "
 vim.diagnostic.config({
   virtual_text = { prefix = "·" },
   signs = { text = { [1] = "E", [2] = "W", [3] = "I", [4] = "H" } },
@@ -35,7 +35,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     local row = math.min(14, line_count)
     local line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1] or ""
     vim.api.nvim_win_set_cursor(0, { row, math.min(11, #line) })
-    vim.diagnostic.set(vim.api.nvim_create_namespace("claude-preview"), 0, {
+    vim.diagnostic.set(vim.api.nvim_create_namespace("clay-preview"), 0, {
       { lnum = math.min(27, line_count - 1), col = 0, severity = vim.diagnostic.severity.HINT, message = "Demo hint: grayscale diagnostic" },
     })
   end,

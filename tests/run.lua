@@ -2,7 +2,7 @@ local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h")
 local bundled_parsers = vim.fn.fnamemodify(vim.fn.resolve(vim.v.progpath), ":p:h:h") .. "/lib/nvim"
 vim.opt.runtimepath = { root, vim.env.VIMRUNTIME, bundled_parsers }
 vim.opt.packpath = {}
-local theme = require("claude")
+local theme = require("clay")
 local colors = theme.get_palette()
 local count = 0
 
@@ -20,7 +20,7 @@ end
 
 local function load(opts)
   theme.setup(opts)
-  vim.cmd.colorscheme("claude")
+  vim.cmd.colorscheme("clay")
 end
 
 local function test(name, fn)
@@ -38,8 +38,8 @@ local function run()
       end
     end
     local diagnostic = vim.diagnostic.config()
-    vim.cmd.colorscheme("claude")
-    equal(vim.g.colors_name, "claude")
+    vim.cmd.colorscheme("clay")
+    equal(vim.g.colors_name, "clay")
     equal(vim.o.background, "dark")
     equal(theme.get_options().transparent, true)
     equal(hl("Normal").bg, nil)
@@ -91,12 +91,12 @@ local function run()
     assert(not hl("@keyword").bold)
     equal(fg("@function"), color(colors.clay))
     equal(fg("CursorLineNr"), color(colors.clay))
-    equal(hl("ClaudeMode").bg, color(colors.clay))
+    equal(hl("ClayMode").bg, color(colors.clay))
     equal(hl("StatusLine").bg, color(colors.statusline))
   end)
 
   test("colors stay grayscale apart from the canvas and Clay and every link resolves", function()
-    local groups = vim.tbl_extend("force", require("claude.highlights").get(colors, theme.get_options()), require("claude.integrations").get(colors, theme.get_options()))
+    local groups = vim.tbl_extend("force", require("clay.highlights").get(colors, theme.get_options()), require("clay.integrations").get(colors, theme.get_options()))
     for name, spec in pairs(groups) do
       if spec.link then
         assert(groups[spec.link], name .. " has an undefined link: " .. spec.link)
@@ -144,8 +144,8 @@ local function run()
     equal(hl("Keyword").bold, true)
     equal(hl("@function").fg, color("#c87860"))
     equal(hl("TelescopeMatching").fg, color("#c87860"))
-    package.loaded["lualine.themes.claude"] = nil
-    equal(require("lualine.themes.claude").normal.a.bg, "#c87860")
+    package.loaded["lualine.themes.clay"] = nil
+    equal(require("lualine.themes.clay").normal.a.bg, "#c87860")
     load()
     equal(hl("Comment").italic, true)
     assert(not hl("Keyword").bold)
@@ -155,18 +155,18 @@ local function run()
     load({ overrides = function(c, opts)
       c.clay = "#ffffff"
       opts.accent = "minimal"
-      return { Comment = { link = "String" }, ClaudeTest = { fg = "#abcdef", bold = true } }
+      return { Comment = { link = "String" }, ClayTest = { fg = "#abcdef", bold = true } }
     end })
     equal(hl("Comment", true).link, "String")
     equal(hl("Comment").fg, color(colors.muted))
-    equal(hl("ClaudeTest").fg, color("#abcdef"))
+    equal(hl("ClayTest").fg, color("#abcdef"))
     equal(theme.get_palette().clay, colors.clay)
     equal(theme.get_options().accent, "restrained")
     load({ overrides = { Comment = {} } })
     equal(hl("Comment"), {})
     load()
     equal(hl("Comment").fg, color(colors.comment))
-    equal(hl("ClaudeTest"), {})
+    equal(hl("ClayTest"), {})
   end)
 
   test("invalid setup is rejected without changing active configuration", function()
@@ -177,7 +177,7 @@ local function run()
     }
     for _, opts in ipairs(invalid) do
       local ok, err = pcall(theme.setup, opts)
-      assert(not ok and tostring(err):find("claude.nvim:", 1, true))
+      assert(not ok and tostring(err):find("clay.nvim:", 1, true))
       equal(theme.get_options().accent, "restrained")
       equal(hl("Normal").bg, nil)
     end
@@ -199,8 +199,8 @@ local function run()
   end)
 
   test("lualine mode colors remain Clay and nested tables are independent", function()
-    package.loaded["lualine.themes.claude"] = nil
-    local status = require("lualine.themes.claude")
+    package.loaded["lualine.themes.clay"] = nil
+    local status = require("lualine.themes.clay")
     for _, mode in ipairs({ "normal", "insert", "visual", "replace", "command", "terminal" }) do
       equal(status[mode].a.bg, colors.clay)
       equal(status[mode].b.bg, colors.statusline)
@@ -212,10 +212,10 @@ local function run()
 
   test("colorscheme reload and switching back from another theme", function()
     local events = 0
-    local autocmd = vim.api.nvim_create_autocmd("ColorScheme", { pattern = "claude", callback = function() events = events + 1 end })
+    local autocmd = vim.api.nvim_create_autocmd("ColorScheme", { pattern = "clay", callback = function() events = events + 1 end })
     vim.cmd.colorscheme("default")
-    vim.cmd.colorscheme("claude")
-    vim.cmd.colorscheme("claude")
+    vim.cmd.colorscheme("clay")
+    vim.cmd.colorscheme("clay")
     equal(events, 2)
     equal(hl("Normal").bg, nil)
     equal(hl("@lsp.type.function").fg, nil)
@@ -226,7 +226,7 @@ local function run()
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(buf)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-      "local function greet(name)", "  return name", "end", "greet('Claude')",
+      "local function greet(name)", "  return name", "end", "greet('Clay')",
     })
     vim.bo[buf].filetype = "lua"
     local parser = vim.treesitter.get_parser(buf, "lua")

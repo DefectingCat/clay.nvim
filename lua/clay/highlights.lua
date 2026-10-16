@@ -138,9 +138,9 @@ function M.get(c, opts)
     LspCodeLensSeparator = { fg = c.gutter },
     LspSignatureActiveParameter = { fg = c.bright, bold = true, underline = true },
 
-    ClaudeAccent = { fg = c.clay },
-    ClaudeMode = { fg = c.bg, bg = c.clay, bold = true },
-    ClaudeMuted = { fg = c.comment },
+    ClayAccent = { fg = c.clay },
+    ClayMode = { fg = c.bg, bg = c.clay, bold = true },
+    ClayMuted = { fg = c.comment },
   }
 
   local links = {

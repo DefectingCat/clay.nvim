@@ -1,18 +1,22 @@
-*claude.txt*              Grayscale and Clay for Neovim
+*clay.txt*                clay.nvim — Grayscale and Clay for Neovim
+
+The development version is named clay.nvim. When upgrading from v0.1.0,
+replace the claude module/colorscheme/lualine theme with clay, the Claude
+highlight prefix with Clay, and the CLAUDE_ environment prefix with CLAY_.
 
 ==============================================================================
-SETUP                                                          *claude-setup*
+SETUP                                                          *clay-setup*
 
 Add this repository to 'runtimepath' or install it with a plugin manager.
 Requires Neovim 0.10.4+ and a true-color terminal.
 >
-    lua require('claude').setup({ accent = 'restrained' })
-    colorscheme claude
+    lua require('clay').setup({ accent = 'restrained' })
+    colorscheme clay
 <
 setup() is optional. Each call replaces configuration using the defaults below.
-Run :colorscheme claude again to apply changed options.
+Run :colorscheme clay again to apply changed options.
 
-VERSIONING                                                 *claude-versioning*
+VERSIONING                                                 *clay-versioning*
 
 Releases use annotated Git tags named vMAJOR.MINOR.PATCH. See CHANGELOG.md for
 release notes and RELEASING.md for compatibility rules and release steps.
@@ -21,7 +25,7 @@ breaking changes increment the minor version. Breaking and major visual changes
 are documented explicitly. Neovim version requirements are separate from the
 theme's release version. Local directory installations use the current checkout.
 
-OPTIONS                                                      *claude-options*
+OPTIONS                                                      *clay-options*
 
 accent              'restrained'  'minimal', 'restrained', or 'expressive'
 transparent         true          Transparent editor and sidebar backgrounds
@@ -59,7 +63,7 @@ diff_add, diff_delete.
 Override entries replace complete highlights, including links. An empty table
 clears a highlight. The callback must return a highlight table.
 >
-    require('claude').setup({
+    require('clay').setup({
       overrides = function(c)
         return { Comment = { fg = c.secondary } }
       end,
@@ -67,7 +71,7 @@ clears a highlight. The callback must return a highlight table.
 <
 get_palette() and get_options() return copies of the active configuration.
 
-INTEGRATIONS                                            *claude-integrations*
+INTEGRATIONS                                            *clay-integrations*
 
 Telescope, Snacks picker/dashboard/indent, nvim-cmp, blink.cmp, Neo-tree,
 nvim-tree, Gitsigns, which-key, indent-blankline, mini.statusline, mini.tabline,
@@ -89,24 +93,24 @@ Keep bufferline's options.themable=true (its default). Set highlight=true in
 nvim-navic's setup to enable its icon/text highlights. The theme does not alter
 these plugin settings.
 
-Configure lualine after claude.setup():
+Configure lualine after clay.setup():
 >
-    require('lualine').setup({ options = { theme = 'claude' } })
+    require('lualine').setup({ options = { theme = 'clay' } })
 <
-For a custom statusline: ClaudeMode is a Clay block, ClaudeAccent is Clay text,
-and ClaudeMuted is secondary text. The theme does not set your statusline.
+For a custom statusline: ClayMode is a Clay block, ClayAccent is Clay text,
+and ClayMuted is secondary text. The theme does not set your statusline.
 
-PREVIEW                                                       *claude-preview*
+PREVIEW                                                       *clay-preview*
 
 From the repository directory run `make preview`. This uses an isolated demo
-configuration and works over SSH. Exit with :q!. Set CLAUDE_ACCENT=minimal or
-CLAUDE_ACCENT=expressive to compare alternatives. Run `make test` for checks;
+configuration and works over SSH. Exit with :q!. Set CLAY_ACCENT=minimal or
+CLAY_ACCENT=expressive to compare alternatives. Run `make test` for checks;
 the tests require a Lua Tree-sitter parser.
 
 Run `make preview-parsers` once for multilingual previews (Neovim 0.12+, current
 nvim-treesitter, tree-sitter CLI 0.26.1+, cc, curl, tar required). Parsers and
 queries are installed into .preview/site in the repository, not your personal
-Neovim installation. CLAUDE_TREESITTER_DIR overrides the installer checkout;
+Neovim installation. CLAY_TREESITTER_DIR overrides the installer checkout;
 its default is stdpath('data') .. '/lazy/nvim-treesitter'.
 
 Use `make preview FILE=examples/demo.py` or :edit to change languages. The
@@ -114,7 +118,7 @@ statusline reports Tree-sitter or regex; :messages explains fallback errors.
 Without a parser AND highlights query, function definitions may remain gray.
 Run `make test-languages` to verify definition/call colors in nine languages.
 
-CLAUDE_PREVIEW_RUNTIME accepts colon-separated runtime directories with parsers
+CLAY_PREVIEW_RUNTIME accepts colon-separated runtime directories with parsers
 and queries and overrides the preview cache path. Neovim older than 0.12 uses
 bundled parsers unless this variable supplies compatible ones. No personal
 configuration or plugin setup is loaded by the preview.

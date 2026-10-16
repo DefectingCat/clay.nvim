@@ -13,10 +13,10 @@ local defaults = {
 local options = vim.deepcopy(defaults)
 
 local function fail(message)
-  error("claude.nvim: " .. message, 3)
+  error("clay.nvim: " .. message, 3)
 end
 
----Configure the theme. Apply it separately with :colorscheme claude.
+---Configure the theme. Apply it separately with :colorscheme clay.
 ---@param opts? table
 function M.setup(opts)
   if opts ~= nil and type(opts) ~= "table" then
@@ -40,7 +40,7 @@ function M.setup(opts)
   if type(next_options.palette) ~= "table" then
     fail("palette must be a table")
   end
-  local palette = require("claude.palette")
+  local palette = require("clay.palette")
   for key, value in pairs(next_options.palette) do
     if palette[key] == nil then
       fail("unknown palette color: " .. tostring(key))
@@ -61,14 +61,14 @@ function M.get_options()
 end
 
 function M.get_palette()
-  return vim.tbl_extend("force", vim.deepcopy(require("claude.palette")), options.palette)
+  return vim.tbl_extend("force", vim.deepcopy(require("clay.palette")), options.palette)
 end
 
 function M.load()
   local colors = M.get_palette()
   local opts = M.get_options()
-  local groups = require("claude.highlights").get(colors, opts)
-  groups = vim.tbl_extend("force", groups, require("claude.integrations").get(colors, opts))
+  local groups = require("clay.highlights").get(colors, opts)
+  groups = vim.tbl_extend("force", groups, require("clay.integrations").get(colors, opts))
   local overrides = opts.overrides
   if type(overrides) == "function" then
     overrides = overrides(vim.deepcopy(colors), vim.deepcopy(opts))
@@ -90,7 +90,7 @@ function M.load()
   if vim.g.syntax_on then
     vim.cmd("syntax reset")
   end
-  vim.g.colors_name = "claude"
+  vim.g.colors_name = "clay"
   for group, spec in pairs(groups) do
     vim.api.nvim_set_hl(0, group, spec)
   end

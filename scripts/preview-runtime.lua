@@ -3,7 +3,7 @@ local M = {}
 -- Share the same isolated parser/query paths between the preview and its tests.
 function M.configure(root)
   local paths = { root }
-  local extra = vim.env.CLAUDE_PREVIEW_RUNTIME
+  local extra = vim.env.CLAY_PREVIEW_RUNTIME
   if extra then
     vim.list_extend(paths, vim.split(extra, ":", { trimempty = true }))
   elseif vim.fn.has("nvim-0.12") == 1 then
@@ -20,7 +20,7 @@ end
 function M.start(buf)
   local ft = vim.bo[buf].filetype
   if ft == "" then
-    vim.b[buf].claude_preview_highlighter = "plain"
+    vim.b[buf].clay_preview_highlighter = "plain"
     return true
   end
   local lang = vim.treesitter.language.get_lang(ft) or ft
@@ -31,8 +31,8 @@ function M.start(buf)
     parser:parse()
     vim.treesitter.start(buf, lang)
   end)
-  vim.b[buf].claude_preview_highlighter = ok and "Tree-sitter" or "regex"
-  vim.b[buf].claude_preview_error = not ok and tostring(err) or nil
+  vim.b[buf].clay_preview_highlighter = ok and "Tree-sitter" or "regex"
+  vim.b[buf].clay_preview_error = not ok and tostring(err) or nil
   if not ok then
     pcall(vim.treesitter.stop, buf)
     vim.bo[buf].syntax = ft

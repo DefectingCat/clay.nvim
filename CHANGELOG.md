@@ -4,7 +4,13 @@
 
 ## [Unreleased]
 
-暂无待发布变更。
+### 不兼容变化
+
+- 项目更名为 `clay.nvim`。`v0.1.0` 仍使用旧名称 `claude.nvim`，当前改名将在后续次版本发布，不改写已有标签。
+- 配置入口从 `require("claude")` 改为 `require("clay")`，配色命令从 `:colorscheme claude` 改为 `:colorscheme clay`；lualine 的 `theme = "claude"` 改为 `theme = "clay"`。
+- 自定义高亮组前缀从 `Claude` 改为 `Clay`（例如 `ClaudeMode` → `ClayMode`），帮助入口从 `:help claude.txt` 改为 `:help clay.txt`，其他帮助标签也统一使用 `clay-` 前缀。
+- 预览和测试环境变量从 `CLAUDE_` 改为 `CLAY_`：`CLAY_ACCENT`、`CLAY_TREESITTER_DIR`、`CLAY_PREVIEW_RUNTIME`、`CLAY_PLUGIN_ROOTS`。
+- 旧入口不再提供；升级时同步修改主题配置、lualine 配置、自定义状态栏、高亮覆盖和脚本引用。配色和配置项保持原有行为。
 
 ## [v0.1.0] - 2026-10-16
 

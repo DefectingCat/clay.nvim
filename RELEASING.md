@@ -14,9 +14,9 @@ Git 标签是发布版本的权威来源。`CHANGELOG.md` 记录每次发布的�
 
 以下内容作为本项目的公共接口与兼容性约定：
 
-- `:colorscheme claude` 入口，以及 `require("claude")` 的 `setup()`、`load()`、`get_options()`、`get_palette()`。
-- README 和 `doc/claude.txt` 中记录的配置项、取值、默认行为、色板键及 `overrides` 回调与替换语义。
-- 文档公开的 `ClaudeMode`、`ClaudeAccent`、`ClaudeMuted` 高亮组，以及 `lualine.themes.claude` 集成入口。
+- `:colorscheme clay` 入口，以及 `require("clay")` 的 `setup()`、`load()`、`get_options()`、`get_palette()`。
+- README 和 `doc/clay.txt` 中记录的配置项、取值、默认行为、色板键及 `overrides` 回调与替换语义。
+- 文档公开的 `ClayMode`、`ClayAccent`、`ClayMuted` 高亮组，以及 `lualine.themes.clay` 集成入口。
 - 最低支持的 Neovim 版本。
 
 其他内部模块与实现细节不作为稳定接口。第三方插件自身的最低版本要求与主题最低版本分别记录；预览 parser 准备工具的要求也独立于主题。
@@ -46,8 +46,8 @@ Git 标签是发布版本的权威来源。`CHANGELOG.md` 记录每次发布的�
    make test
    make test NVIM=/path/to/minimum-supported-nvim
    make test-languages
-   CLAUDE_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/plugin-checkouts" make test-plugins
-   CLAUDE_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/plugin-checkouts" make test-plugins NVIM=/path/to/minimum-supported-nvim
+   CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/plugin-checkouts" make test-plugins
+   CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/plugin-checkouts" make test-plugins NVIM=/path/to/minimum-supported-nvim
    ```
 
    替换示例路径；记录实际 Neovim 版本、通过数量、跳过项与未验证范围。明显配色变化还需用 `make preview` 人工查看。测试命令及 parser 准备要求见 [README.md](README.md#验证)。
@@ -70,4 +70,4 @@ Git 标签是发布版本的权威来源。`CHANGELOG.md` 记录每次发布的�
 
 仓库尚未配置远程时，只创建本地标签。配置远程后，先推送发布提交，再单独推送对应标签；如使用 GitHub，可根据该标签创建 Release，说明取自对应的变更日志章节。只有提交和标签确实到达远程后，才称为远程发布完成。
 
-使用远程 Git 仓库安装时，lazy.nvim 支持 `tag = "v0.1.0"` 固定发行版，或 `version = "~0.1.0"` 选择 `0.1.x` 系列，具体见 [lazy.nvim 版本选项](https://lazy.folke.io/spec#spec-versioning)。本地 `dir` 安装使用目录当前内容，应自行切换该 checkout；添加版本选项不会替本地目录切换发布标签。
+使用远程 Git 仓库安装时，lazy.nvim 支持 `tag = "v0.1.0"` 固定发行版，或 `version = "~0.1.0"` 选择 `0.1.x` 系列，具体见 [lazy.nvim 版本选项](https://lazy.folke.io/spec#spec-versioning)。`v0.1.0` 使用旧的 `claude.nvim` 名称与接口；当前 `clay.nvim` 改名属于不兼容变化，下次发布须递增次版本号，迁移方式见变更日志。本地 `dir` 安装使用目录当前内容，应自行切换该 checkout；添加版本选项不会替本地目录切换发布标签。

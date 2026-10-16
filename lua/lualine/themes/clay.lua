@@ -1,4 +1,4 @@
-local c = require("claude").get_palette()
+local c = require("clay").get_palette()
 local active = {
   a = { fg = c.bg, bg = c.clay, gui = "bold" },
   b = { fg = c.secondary, bg = c.statusline },

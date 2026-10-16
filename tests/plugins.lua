@@ -3,8 +3,8 @@ local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h")
 vim.opt.runtimepath = { root, vim.env.VIMRUNTIME }
 vim.opt.packpath = {}
 vim.opt.loadplugins = false
-local roots = vim.split(vim.env.CLAUDE_PLUGIN_ROOTS or "", ":", { trimempty = true })
-assert(#roots > 0, "Set CLAUDE_PLUGIN_ROOTS to colon-separated directories containing plugin checkouts")
+local roots = vim.split(vim.env.CLAY_PLUGIN_ROOTS or "", ":", { trimempty = true })
+assert(#roots > 0, "Set CLAY_PLUGIN_ROOTS to colon-separated directories containing plugin checkouts")
 
 local function add(name)
   for _, parent in ipairs(roots) do
@@ -17,11 +17,11 @@ local function add(name)
   return false
 end
 
-local theme = require("claude")
-vim.cmd.colorscheme("claude")
+local theme = require("clay")
+vim.cmd.colorscheme("clay")
 local function snapshot()
   local colors, opts = theme.get_palette(), theme.get_options()
-  local names = vim.tbl_extend("force", require("claude.highlights").get(colors, opts), require("claude.integrations").get(colors, opts))
+  local names = vim.tbl_extend("force", require("clay.highlights").get(colors, opts), require("clay.integrations").get(colors, opts))
   local result = {}
   for name in pairs(names) do
     result[name] = vim.api.nvim_get_hl(0, { name = name, link = false })
@@ -116,7 +116,7 @@ local function run()
     theme.setup(opts)
     theme.load() -- Snapshot before ColorScheme hooks from the real plugins run.
     local expected = snapshot()
-    vim.cmd.colorscheme("claude")
+    vim.cmd.colorscheme("clay")
     unchanged(expected, "ColorScheme reload")
   end
   print(string.format("%d real plugin checks passed, %d skipped; opaque, custom accent, and default reloads passed", count, skipped))

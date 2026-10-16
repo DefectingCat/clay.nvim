@@ -1,8 +1,8 @@
 local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h")
 local preview = dofile(root .. "/scripts/preview-runtime.lua")
 preview.configure(root)
-local theme = require("claude")
-vim.cmd.colorscheme("claude")
+local theme = require("clay")
+vim.cmd.colorscheme("clay")
 
 -- Exercise real parsers and queries. Each fixture has one definition and call.
 local cases = {
@@ -51,11 +51,11 @@ local function run()
     vim.bo[buf].filetype = ft
     local ok, err = preview.start(buf)
     assert(ok, ft .. ": " .. tostring(err) .. "\nRun make preview-parsers first")
-    assert(vim.b[buf].claude_preview_highlighter == "Tree-sitter")
-    assert(vim.b[buf].claude_preview_error == nil)
+    assert(vim.b[buf].clay_preview_highlighter == "Tree-sitter")
+    assert(vim.b[buf].clay_preview_error == nil)
     for _, accent in ipairs({ "restrained", "minimal", "expressive" }) do
       theme.setup({ accent = accent })
-      vim.cmd.colorscheme("claude")
+      vim.cmd.colorscheme("clay")
       local definition = accent == "minimal" and colors.bright or colors.clay
       local call = accent == "expressive" and colors.clay or colors.muted
       check_token(buf, lines, defrow, true, tonumber(definition:sub(2), 16))
@@ -67,11 +67,11 @@ local function run()
   end
   -- A missing parser must be visible to the user, never reported as Tree-sitter.
   local buf = vim.api.nvim_create_buf(false, true)
-  vim.bo[buf].filetype = "claude_missing_parser"
+  vim.bo[buf].filetype = "clay_missing_parser"
   local ok, err = preview.start(buf)
   assert(not ok and err)
-  assert(vim.b[buf].claude_preview_highlighter == "regex")
-  assert(vim.b[buf].claude_preview_error:find("claude_missing_parser", 1, true))
+  assert(vim.b[buf].clay_preview_highlighter == "regex")
+  assert(vim.b[buf].clay_preview_error:find("clay_missing_parser", 1, true))
   vim.api.nvim_buf_delete(buf, { force = true })
   print("PASS missing parser: explicit regex fallback with the original error")
 end
