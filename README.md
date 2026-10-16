@@ -1,232 +1,101 @@
 # clay.nvim
 
-以中性灰为主体、Clay 陶土色点缀的深色 Neovim 主题。
+灰阶为底，陶土色点睛的 Neovim 深色主题。
 
-默认背景透明，沿用终端底色；关闭透明时使用 `#111315`（RGB 17, 19, 21）背景。正文采用 `#CCCCCC`，强调色为 `#D97757`。默认只为函数定义和当前操作位置添加 Clay；关键字、字符串、变量和函数调用通过灰阶区分。诊断、Diff、Git 状态同样保持灰阶。
+默认透明背景，以 `#D97757` Clay 突出函数定义与操作焦点；语法、诊断、Diff 和 Git 状态以灰阶区分。关闭透明后，背景为 `#111315`。
 
-灵感来自 [Claude Design System 设计风格与动效体系总结](https://rua.plus/post/claude-design-system-style-and-motion) 中的配色与表面层级。这是独立社区主题。
-
-灰阶层级参考 [lackluster.nvim](https://github.com/slugbyte/lackluster.nvim/tree/70dd682e564784893b984deb51dd5ddd263c8cc7)：让变量与类型名更突出，弱化关键字、调用和标点，默认不加粗关键字。保留 Claude 的 Clay 作为唯一强调色，注释则提高亮度以方便阅读。
-
-| 用途 | 默认颜色 |
-| --- | --- |
-| 正文、变量、类型定义 | `#CCCCCC` |
-| 成员、常量、类型 | `#AAAAAA` |
-| 参数、关键字、字符串、函数调用 | `#8E8E8E` |
-| 注释、标点、运算符 | `#7A7A7A` |
-| 函数定义、焦点、模式标记 | `#D97757` Clay |
-| 浮窗 / 状态栏 / 选区 | `#1A1A1A` / `#242424` / `#2A2A2A` |
-
-以上语法层级以 Tree-sitter 为准；点缀范围也可通过下面的 `accent` 选项切换。
-
-## 版本与发布
-
-发布版本以 Git 附注标签 `vMAJOR.MINOR.PATCH` 为准，变更记录见 [CHANGELOG.md](CHANGELOG.md)，兼容性规则与发布步骤见 [RELEASING.md](RELEASING.md)。`0.x` 阶段仍在完善接口；修复递增修订号，新增功能或不兼容调整递增次版本号，并在变更日志中说明迁移方式。
-
-在 Git checkout 中查看当前修订：
-
-```bash
-git describe --tags --match 'v[0-9]*' --dirty --always
-```
-
-标签后的提交会带上提交距离和哈希，已跟踪文件有未提交修改时会带上 `-dirty`。README 和 Lua 模块不重复维护当前版本常量。文档中的 Neovim 版本号表示运行环境要求。
-
-## 直接预览
-
-需要 Neovim 0.10.4+ 和支持 true color 的终端。无需安装插件、无需修改个人配置：
-
-```bash
-cd /path/to/clay.nvim
-make preview
-```
-
-SSH 会话也可以直接运行。输入 `:q!` 退出。
-
-```bash
-CLAY_ACCENT=minimal make preview
-CLAY_ACCENT=expressive make preview
-```
-
-预览使用独立配置与 `examples/demo.lua`，启用行号、当前行、状态栏和一条示例诊断。同目录还有 Rust、Go、Python、TypeScript、C、C++ 和 Java 样例，预览会话里用 `:edit examples/demo.rs` 这类路径打开。有对应 Tree-sitter parser 时优先使用；未安装时回退到传统语法高亮。
-
-首次查看多语言效果，先准备仓库专用的 parser 和查询文件，再打开对应文件：
-
-```bash
-make preview-parsers
-make preview FILE=examples/demo.py
-make preview FILE=examples/demo.rs
-make test-languages
-```
-
-准备命令需要 Neovim 0.12+、当前版本的 nvim-treesitter、tree-sitter CLI 0.26.1+、C 编译器、curl 和 tar。默认使用已安装的 `~/.local/share/nvim/lazy/nvim-treesitter`；其他路径可用 `CLAY_TREESITTER_DIR=/path/to/nvim-treesitter make preview-parsers` 指定。它下载并编译 Lua、C、C++、Go、Java、Python、Rust、JavaScript、TypeScript 的 parser，把结果放在 Git 忽略的 `.preview/site`，不修改个人 Neovim 配置或 parser 安装目录。
-
-预览状态栏显示 `Tree-sitter` 或 `regex`。出现 `regex` 表示未能启用语法解析，`:messages` 会显示具体原因；此时函数定义可能没有 Clay。隔离预览不会自动加载个人插件和 parser。主题本身仍支持 Neovim 0.10.4+，旧版预览使用 Neovim 自带的 parser；也可通过 `CLAY_PREVIEW_RUNTIME` 指定冒号分隔、含兼容 parser 和查询文件的 runtime 目录。
-
-`design/clay-grayscale.html` 保留最初的交互设计稿；`make preview` 展示实际主题。
+需要 **Neovim 0.10.4+** 和支持真彩色的终端。
 
 ## 安装
 
-当前仓库尚未设置远程地址，可以先使用本地目录。将下面的 `/path/to/clay.nvim` 替换为实际 checkout 路径；目录名不影响主题加载。
-
-从 `v0.1.0` 升级时，将 `require("claude")`、`colorscheme claude` 和 lualine 的 `theme = "claude"` 分别改为 `require("clay")`、`colorscheme clay` 和 `theme = "clay"`。自定义高亮前缀改为 `Clay`，脚本环境变量前缀改为 `CLAY_`；完整迁移说明见 [变更日志](CHANGELOG.md#unreleased)。
-
-### lazy.nvim
+使用 lazy.nvim：
 
 ```lua
 {
-  dir = "/path/to/clay.nvim",
-  name = "clay.nvim",
+  "DefectingCat/clay.nvim",
+  version = false,
   lazy = false,
   priority = 1000,
-  config = function()
-    require("clay").setup({
-      accent = "restrained",
-    })
+  opts = {},
+  config = function(_, opts)
+    require("clay").setup(opts)
     vim.cmd.colorscheme("clay")
   end,
 }
 ```
 
-也可以在 `init.lua` 中直接加入 runtimepath：
-
-```lua
-vim.opt.runtimepath:prepend("/path/to/clay.nvim")
-vim.cmd.colorscheme("clay")
-```
-
-主题会设置 `background=dark` 和 `termguicolors`。侧栏、状态栏、光标形状、诊断符号、插件安装与布局由自己的 Neovim 配置决定。
+`v0.1.0` 使用旧名称 `claude`，上例跟随当前分支。旧版升级见[迁移说明](CHANGELOG.md#unreleased)。
 
 ## 配置
 
-`setup()` 可省略；每次调用都从以下默认值开始。修改配置后重新执行 `:colorscheme clay` 生效。
+在 `opts` 中按需设置，以下为默认值：
 
 ```lua
-require("clay").setup({
-  accent = "restrained", -- "minimal" | "restrained" | "expressive"
+opts = {
+  accent = "restrained",
   transparent = true,
   italic_comments = true,
   bold_keywords = false,
   terminal_colors = true,
   palette = {},
   overrides = {},
-})
-
-vim.cmd.colorscheme("clay")
+}
 ```
 
-| 点缀范围 | 函数定义 | 函数调用 | 当前操作位置 |
-| --- | --- | --- | --- |
-| `minimal` | 亮灰 | 灰 | Clay |
-| `restrained`（默认） | Clay | 灰 | Clay |
-| `expressive` | Clay | Clay | Clay |
+| `accent`     | 函数定义 | 函数调用 | 操作焦点 |
+| ------------ | -------- | -------- | -------- |
+| `minimal`    | 亮灰     | 灰       | Clay     |
+| `restrained` | Clay     | 灰       | Clay     |
+| `expressive` | Clay     | Clay     | Clay     |
 
-定义与调用的区分依赖 Tree-sitter 的 capture 或 LSP 的 declaration/definition modifier。传统语法高亮无法可靠区分两者，因此默认 `Function` 保持灰色。LSP 的通用 function/method 高亮不会覆盖 Tree-sitter 的前景色。
+区分函数定义与调用需要 Tree-sitter 高亮或 LSP 定义标记。设置 `transparent = false` 使用实色背景；浮窗、状态栏与选区始终保留底色。
 
-这套高亮适用于各语言的 `@function` / `@function.method` 等 capture，并非只支持 Lua。在自己的 Neovim 配置中，需要安装目标语言的 parser 和查询文件，并启用 Tree-sitter 高亮，具体配置参见 [nvim-treesitter 的高亮说明](https://github.com/nvim-treesitter/nvim-treesitter#highlighting)。`make preview-parsers` 仅为仓库预览准备依赖，不会替个人配置安装 parser。
-
-透明模式默认开启，移除编辑区和侧栏底色，选区、状态栏与浮窗保留实色以保持层次。设置 `transparent = false` 可恢复主题实色背景。透明模式让终端背景透出，实际透明度由终端或前端设置决定。光标高亮是否显示取决于终端、前端和 `guicursor` 设置。
-
-`terminal_colors=true` 会为 Neovim 内置终端设置 16 色 ANSI 调色板，yellow/bright yellow 使用 Clay，其余使用灰阶。设为 `false` 可保留已有终端调色板；它不会撤销先前已经设置的终端颜色。
-
-### 自定义色板和高亮
-
-```lua
-require("clay").setup({
-  palette = {
-    bg = "#1c1c1c",
-    clay = "#d97757",
-  },
-  overrides = function(colors, opts)
-    return {
-      Comment = { fg = colors.secondary, italic = opts.italic_comments },
-      ["@markup.heading"] = { fg = colors.clay, bold = true },
-      TelescopeBorder = { link = "FloatBorder" },
-    }
-  end,
-})
-```
-
-`overrides` 也可直接传入高亮表；每项会完整替换对应高亮，`{}` 表示清空。色板支持的键见 [palette.lua](lua/clay/palette.lua)。`require("clay").get_palette()` 返回当前色板的副本。
+通过 `palette` 修改[色板](lua/clay/palette.lua)，通过 `overrides` 覆盖高亮。完整示例见 [`:help clay-options`](doc/clay.txt)。配置变更后执行 `:colorscheme clay` 生效。
 
 ## 插件适配
 
-内置高亮映射覆盖：
+内置 Telescope、Snacks、nvim-cmp、blink.cmp、Neo-tree、Gitsigns、Noice、bufferline、mini.nvim 等插件高亮，完整列表见[帮助文档](doc/clay.txt)。
 
-- Telescope、Snacks picker / dashboard / indent
-- nvim-cmp、blink.cmp
-- Neo-tree、nvim-tree
-- Gitsigns、which-key、indent-blankline
-- lazy.nvim、mason.nvim、Noice、nvim-notify、Trouble
-- bufferline、Oil、Flash、nvim-navic、dashboard-nvim
-- todo-comments、rainbow-delimiters、headlines、Yanky
-- nvim-scrollbar、nvim-lightbulb、vim-gitgutter、indentmini
-- mini.statusline、mini.tabline、mini.indentscope、mini.cursorword、mini.diff
-- mini.jump、mini.jump2d、mini.starter、mini.surround、mini.trailspace
-- lualine 专用主题
-
-这些映射不会主动加载插件。插件新增的高亮组、第三方图标的独立颜色以及用户覆盖仍可能带入其他颜色；可通过 `:Inspect`、`:highlight` 和 `overrides` 调整。
-
-rainbow-delimiters 使用不同明度的灰色区分括号层级；TODO、Git 和诊断仍使用灰阶。Flash / mini 跳转标签、当前操作提示使用 Clay。Bufferline 的非活动区域跟随透明设置，选中项保留实色背景。
-
-### 插件自身的配色选项
-
-nvim-scrollbar 默认会主动重建高亮，需要关闭它的颜色生成，让主题提供滑块、标记和 Clay 焦点：
+lualine 在主题配置后设置：
 
 ```lua
-require("scrollbar").setup({ set_highlights = false })
+require("lualine").setup({ options = { theme = "clay" } })
 ```
 
-Bufferline 保持默认的 `options.themable = true` 即可。nvim-navic 需要在其配置中设置 `highlight = true`，才会使用 `NavicText` / `NavicIcons*`。这些配置由用户启用，主题本身不会修改插件选项。
+nvim-scrollbar 需设置 `set_highlights = false`，nvim-navic 需设置 `highlight = true`。
 
-### lualine
+## 预览
 
-```lua
-require("lualine").setup({
-  options = {
-    theme = "clay",
-    icons_enabled = false,
-    component_separators = "",
-    section_separators = "",
-  },
-})
+在仓库目录运行，使用独立配置：
+
+```bash
+make preview
+CLAY_ACCENT=expressive make preview
 ```
 
-所有模式使用相同的 Clay 色块，依靠模式名称区分。自定义色板时先配置 `clay`，再初始化 lualine。
+多语言预览：
 
-### 灰阶诊断
-
-诊断保留不同明度和下划线。建议配合带含义的符号；以下是可选的用户配置，主题本身不会修改它：
-
-```lua
-vim.diagnostic.config({
-  signs = {
-    text = {
-      [vim.diagnostic.severity.ERROR] = "E",
-      [vim.diagnostic.severity.WARN] = "W",
-      [vim.diagnostic.severity.INFO] = "I",
-      [vim.diagnostic.severity.HINT] = "H",
-    },
-  },
-  severity_sort = true,
-})
+```bash
+make preview-parsers
+make preview FILE=examples/demo.py
 ```
+
+Parser 准备工具需要 Neovim 0.12+、当前版 nvim-treesitter、tree-sitter CLI 0.26.1+、C 编译器、curl 和 tar。默认使用 `~/.local/share/nvim/lazy/nvim-treesitter`，可用 `CLAY_TREESITTER_DIR` 指定其他路径；生成文件位于 `.preview/site/`。
+
+状态栏显示 `regex` 时表示未启用 Tree-sitter，具体原因见 `:messages`。更多选项见 [`:help clay-preview`](doc/clay.txt)。
 
 ## 验证
 
 ```bash
-make test
+make test                  # 核心行为，需要 Lua Tree-sitter parser
+make test-languages        # 九种语言，需先准备 parser
+CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy" make test-plugins
 ```
 
-测试需要 Lua Tree-sitter parser，检查加载与重载、三档点缀、灰阶约束、链接有效性、透明背景、配置覆盖、终端色板、lualine 数据和真实 Lua 定义/调用 capture。测试在独立 Neovim 进程运行，不加载个人配置。
+测试使用独立 Neovim 进程；插件检查使用已有 checkout，缺失依赖显示 `SKIP`。
 
-已在 Neovim 0.10.4 和 0.12.5 上通过全部 13 项检查，包含灰阶明暗层级与 Clay 焦点。部分插件高亮名称已对照上游源码核对；尚未逐一运行完整的第三方插件组合。
+[更新日志](CHANGELOG.md) · [发布指南](RELEASING.md) · [使用文档](doc/clay.txt)
 
-可选的真实插件检查会加载指定 checkout 的初始化代码，并验证延迟加载、主题重载、实色背景、自定义 Clay 和插件生成的颜色；不会读取个人配置，也不会下载或安装插件：
+## 致谢
 
-```bash
-CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/other/checkouts" make test-plugins
-```
-
-本次新增适配已在 Neovim 0.12.5 上通过 19 个真实插件仓库的检查（mini.nvim 包含 7 个模块）。0.10.4 上通过 18 个，当前上游要求 0.11+ 的 nvim-lightbulb 明确跳过；主题本身的高亮映射仍通过 0.10.4 检查。
-
-缺少的 checkout 或不满足插件版本要求会明确报告为 `SKIP`。此检查验证高亮生命周期，不等同于所有插件功能的端到端测试。
+配色灵感来自 [Claude Design System](https://rua.plus/post/claude-design-system-style-and-motion)，灰阶层级参考 [lackluster.nvim](https://github.com/slugbyte/lackluster.nvim/tree/70dd682e564784893b984deb51dd5ddd263c8cc7)。本项目为独立社区主题。
