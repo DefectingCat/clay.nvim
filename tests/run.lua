@@ -149,6 +149,32 @@ local function run()
     equal(hl("NvimTreeNormal").bg, nil)
   end)
 
+  test("border groups share their surface so solid winborder and pumborder read as padding", function()
+    local saved = {}
+    for _, key in ipairs({ "winborder", "pumborder" }) do
+      if vim.fn.exists("+" .. key) == 1 then
+        saved[key] = vim.o[key]
+      end
+    end
+    for _, opts in ipairs({ {}, { transparent = false }, { palette = { float = "#202020" } } }) do
+      for _, border in ipairs({ "solid", "rounded" }) do
+        for key in pairs(saved) do
+          vim.o[key] = border
+        end
+        load(opts)
+        local float = color(theme.get_palette().float)
+        for _, name in ipairs({ "NormalFloat", "FloatBorder", "FloatTitle", "FloatFooter", "Pmenu", "PmenuBorder", "BlinkCmpMenuBorder", "TelescopeBorder", "NoicePopupBorder" }) do
+          equal(hl(name).bg, float, name .. " background with " .. border .. " borders")
+        end
+        equal(hl("FloatBorder").fg, color(colors.float_border))
+      end
+    end
+    for key, value in pairs(saved) do
+      vim.o[key] = value
+    end
+    load()
+  end)
+
   test("text styles and custom palette propagate to integrations", function()
     load({ italic_comments = false, bold_keywords = true, palette = { clay = "#c87860" } })
     assert(not hl("Comment").italic)
