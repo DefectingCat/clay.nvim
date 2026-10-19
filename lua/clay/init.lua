@@ -1,5 +1,32 @@
+---@alias clay.Accent "minimal"|"restrained"|"expressive"
+---@alias clay.PaletteName "bg"|"sidebar"|"float"|"cursorline"|"selection"|"statusline"|"border"|"float_border"|"fg"|"bright"|"secondary"|"muted"|"subtle"|"comment"|"gutter"|"clay"|"diff_add"|"diff_delete"
+---@alias clay.Palette table<clay.PaletteName, string>
+---@alias clay.Highlights table<string, vim.api.keyset.highlight>
+---@alias clay.Overrides clay.Highlights|fun(colors: clay.Palette, options: clay.Config): clay.Highlights
+
+---Options accepted by setup(); omitted fields use the defaults.
+---@class clay.Options
+---@field accent? clay.Accent Which syntax receives Clay accents
+---@field transparent? boolean Leave editor and sidebar backgrounds unset
+---@field italic_comments? boolean
+---@field bold_keywords? boolean
+---@field terminal_colors? boolean Set the built-in terminal ANSI palette
+---@field palette? table<clay.PaletteName, string> #RRGGBB replacements for named colors
+---@field overrides? clay.Overrides Highlights that replace theme definitions
+
+---Resolved configuration returned by get_options().
+---@class clay.Config
+---@field accent clay.Accent
+---@field transparent boolean
+---@field italic_comments boolean
+---@field bold_keywords boolean
+---@field terminal_colors boolean
+---@field palette table<clay.PaletteName, string>
+---@field overrides clay.Overrides
+
 local M = {}
 
+---@type clay.Config
 local defaults = {
   accent = "restrained", -- minimal | restrained | expressive
   transparent = true,
@@ -17,7 +44,7 @@ local function fail(message)
 end
 
 ---Configure the theme. Apply it separately with :colorscheme clay.
----@param opts? table
+---@param opts? clay.Options
 function M.setup(opts)
   if opts ~= nil and type(opts) ~= "table" then
     fail("setup expects a table")
@@ -56,10 +83,12 @@ function M.setup(opts)
 end
 
 ---Return a copy so integrations cannot mutate theme configuration.
+---@return clay.Config
 function M.get_options()
   return vim.deepcopy(options)
 end
 
+---@return clay.Palette
 function M.get_palette()
   return vim.tbl_extend("force", vim.deepcopy(require("clay.palette")), options.palette)
 end

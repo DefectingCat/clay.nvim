@@ -1,6 +1,9 @@
 local M = {}
 
 -- Defining a plugin's highlight groups does not load or configure that plugin.
+---@param c clay.Palette
+---@param opts clay.Config
+---@return clay.Highlights
 function M.get(c, opts)
   local groups = {
     ClaySidebar = { fg = c.fg, bg = opts.transparent and "NONE" or c.sidebar },

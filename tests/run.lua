@@ -187,6 +187,19 @@ local function run()
     load()
   end)
 
+  test("type annotations name every palette color", function()
+    local source = table.concat(vim.fn.readfile(root .. "/lua/clay/init.lua"), "\n")
+    local alias = assert(source:match("%-%-%-@alias clay%.PaletteName ([^\n]+)"), "clay.PaletteName alias missing")
+    local names = {}
+    for name in alias:gmatch('"([%w_]+)"') do
+      names[#names + 1] = name
+    end
+    table.sort(names)
+    local keys = vim.tbl_keys(require("clay.palette"))
+    table.sort(keys)
+    equal(names, keys, "clay.PaletteName differs from lua/clay/palette.lua")
+  end)
+
   test("terminal colors are optional and all 16 entries are populated when enabled", function()
     vim.g.terminal_color_3 = "#123456"
     load({ terminal_colors = false })

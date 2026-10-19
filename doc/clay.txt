@@ -70,6 +70,8 @@ clears a highlight. The callback must return a highlight table.
     })
 <
 get_palette() and get_options() return copies of the active configuration.
+LuaLS annotations describe setup() as clay.Options; add the plugin to your
+workspace library (lazydev.nvim does this) to complete option names.
 
 INTEGRATIONS                                            *clay-integrations*
 

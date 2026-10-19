@@ -1,5 +1,8 @@
 local M = {}
 
+---@param c clay.Palette
+---@param opts clay.Config
+---@return clay.Highlights
 function M.get(c, opts)
   local bg = opts.transparent and "NONE" or c.bg
   local definition = opts.accent == "minimal" and c.bright or c.clay

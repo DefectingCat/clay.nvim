@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### 新增
+
+- 为 `setup()`、`get_options()`、`get_palette()` 和 `overrides` 新增 LuaLS 类型注解，编辑配置时可补全选项、accent 取值与色板名称。
+
 ## [v0.2.1] - 2026-10-20
 
 ### 开发与发布
