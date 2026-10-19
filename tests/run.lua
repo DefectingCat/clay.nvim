@@ -320,7 +320,8 @@ local function run()
       "local function greet(name)", "  return name", "end", "greet('Clay')",
     })
     vim.bo[buf].filetype = "lua"
-    local parser = vim.treesitter.get_parser(buf, "lua")
+    -- Neovim 0.12 returns nil instead of raising when the parser is missing.
+    local parser = assert(vim.treesitter.get_parser(buf, "lua"), "Lua Tree-sitter parser missing")
     parser:parse()
     vim.treesitter.start(buf, "lua")
     local function has_capture(row, column, expected)

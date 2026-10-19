@@ -5,6 +5,7 @@ local theme = require("clay")
 vim.cmd.colorscheme("clay")
 
 -- Exercise real parsers and queries. Each fixture has one definition and call.
+---@type { [1]: string, [2]: string[], [3]: integer, [4]: integer }[]
 local cases = {
   { "lua", { "local function greet(value)", "  return value", "end", "greet('clay')" }, 0, 3 },
   { "c", { "int greet(int value) { return value; }", "int main(void) { return greet(1); }" }, 0, 1 },
@@ -44,7 +45,7 @@ end
 local function run()
   local colors = theme.get_palette()
   for _, case in ipairs(cases) do
-    local ft, lines, defrow, callrow = unpack(case)
+    local ft, lines, defrow, callrow = case[1], case[2], case[3], case[4]
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(buf)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
