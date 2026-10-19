@@ -9,6 +9,10 @@
 - 为 `setup()`、`get_options()`、`get_palette()` 和 `overrides` 新增 LuaLS 类型注解，编辑配置时可补全选项、accent 取值与色板名称。
 - `:help clay-integrations` 改为列出每个适配插件及其仓库地址；列表由各集成模块的元数据生成，测试确保其与实际高亮组一致。
 
+### 变更
+
+- 首次加载主题时不再执行 `:highlight clear`，保留启动期间插件已定义的高亮组；从其他主题切换或重新加载时仍会清除旧高亮。
+
 ### 修复
 
 - 透明模式下，`Normal`、`MsgArea` 与侧栏背景设置 `blend = 0`，避免 noice 迷你消息等带 `winblend` 的浮窗透出下方文字；关闭透明后仍按 `winblend` 混合。

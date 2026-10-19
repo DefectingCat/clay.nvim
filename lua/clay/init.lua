@@ -115,9 +115,13 @@ function M.load()
 
   vim.o.termguicolors = true
   vim.o.background = "dark"
-  vim.cmd("highlight clear")
-  if vim.g.syntax_on then
-    vim.cmd("syntax reset")
+  -- Nothing to clear before the first colorscheme; skipping it keeps groups
+  -- that plugins defined during startup.
+  if vim.g.colors_name then
+    vim.cmd("highlight clear")
+    if vim.g.syntax_on then
+      vim.cmd("syntax reset")
+    end
   end
   vim.g.colors_name = "clay"
   for group, spec in pairs(groups) do
