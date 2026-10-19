@@ -12,7 +12,10 @@ local function run()
   vim.opt.packpath = {}
   vim.opt.loadplugins = false
   local installer = require("nvim-treesitter")
-  installer.setup({ install_dir = root .. "/.preview/site" })
+  local install_dir = root .. "/.preview/site"
+  -- Neovim caches existing runtime directories; create this before setup adds it.
+  vim.fn.mkdir(install_dir, "p")
+  installer.setup({ install_dir = install_dir })
   local languages = { "lua", "c", "cpp", "go", "java", "python", "rust", "javascript", "typescript" }
   local success = installer.install(languages, { max_jobs = 3, summary = true }):wait(300000)
   assert(success, "Some preview parsers failed to install; see the errors above and rerun make preview-parsers")

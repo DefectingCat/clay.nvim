@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tooling:
+    name: Workflow and release tooling
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test release notes
+        run: make test-release
+      - name: Check workflows with actionlint
+        run: |
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/actionlint.tar.gz" \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint" -color
+
+  neovim:
+    name: Neovim ${{ matrix.neovim }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        neovim: [v0.10.4, v0.12.5]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1
+        with:
+          neovim: true
+          version: ${{ matrix.neovim }}
+      - name: Core checks
+        run: |
+          nvim --version
+          make test
+      - name: Fetch pinned plugin checkouts
+        run: python3 scripts/ci_dependencies.py plugins "$RUNNER_TEMP/clay-plugins"
+      - name: Plugin checks
+        env:
+          CLAY_PLUGIN_ROOTS: ${{ runner.temp }}/clay-plugins
+        run: make test-plugins
+
+  languages:
+    name: Tree-sitter languages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1
+        with:
+          neovim: true
+          version: v0.12.5
+      - name: Install pinned Tree-sitter CLI
+        run: |
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/tree-sitter.gz" \
+            https://github.com/tree-sitter/tree-sitter/releases/download/v0.26.1/tree-sitter-linux-x64.gz
+          echo "d74182fffbf441f247371ad6af77d99b10ac9f788d7e068e4b44992d9d6d7c26  $RUNNER_TEMP/tree-sitter.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/clay-bin"
+          gzip -dc "$RUNNER_TEMP/tree-sitter.gz" > "$RUNNER_TEMP/clay-bin/tree-sitter"
+          chmod +x "$RUNNER_TEMP/clay-bin/tree-sitter"
+          echo "$RUNNER_TEMP/clay-bin" >> "$GITHUB_PATH"
+      - name: Fetch pinned nvim-treesitter
+        run: python3 scripts/ci_dependencies.py treesitter "$RUNNER_TEMP/clay-treesitter"
+      - name: Prepare parsers and check languages
+        env:
+          CLAY_TREESITTER_DIR: ${{ runner.temp }}/clay-treesitter/nvim-treesitter
+        run: |
+          make preview-parsers
+          make test-languages

@@ -44,6 +44,7 @@ Git 标签是发布版本的权威来源。`CHANGELOG.md` 记录每次发布的�
 
    ```bash
    make test
+   make test-release
    make test NVIM=/path/to/minimum-supported-nvim
    make test-languages
    CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy:/path/to/plugin-checkouts" make test-plugins
@@ -68,6 +69,23 @@ Git 标签是发布版本的权威来源。`CHANGELOG.md` 记录每次发布的�
 
 ## 远程发布与安装
 
-仓库尚未配置远程时，只创建本地标签。配置远程后，先推送发布提交，再单独推送对应标签；如使用 GitHub，可根据该标签创建 Release，说明取自对应的变更日志章节。只有提交和标签确实到达远程后，才称为远程发布完成。
+推送分支或提交 PR 时，`CI` 工作流执行发布工具检查、Neovim 0.10.4 / 0.12.5 核心与插件检查，以及 0.12.5 的九语言检查。`Release` 工作流在推送 `v*` 标签时复用同一套检查，全部通过后自动创建 GitHub Release，正文提取自 `CHANGELOG.md` 对应版本章节。
+
+发布标签必须为 `vMAJOR.MINOR.PATCH` 格式的附注标签，指向默认分支已有的提交；变更日志需包含唯一、带日期且非空的版本章节。先推送提交，再推送标签：
+
+```bash
+git push origin master
+git push origin "$release_tag"
+```
+
+在 Actions 中确认 `Release` 成功，并检查发布页。工作流失败后可重跑；已经发布的 Release 会保留原样，已有草稿则报错交由维护者处理。日常 CI 的手动运行入口仅执行检查，不发布版本。安装工作流之前的标签不会自动补发。
+
+Actions 使用完整提交 SHA，Dependabot 每周检查 Action 更新。测试插件与 nvim-treesitter 的提交固定在 `.github/ci-dependencies.json`；Neovim 版本、Tree-sitter CLI 和 actionlint 的版本固定在工作流中。升级依赖时同步更新相应 SHA / 校验和并运行检查。CI 依赖下载失败会终止作业；0.10.4 上 nvim-lightbulb 的版本跳过单独报告，不计入通过项。
+
+发布任务使用 GitHub 自动提供的 `GITHUB_TOKEN`，仅该任务拥有 `contents: write`，无需额外 PAT。发布说明可在本地预览：
+
+```bash
+python3 scripts/release_notes.py "$release_tag"
+```
 
 使用远程 Git 仓库安装时，lazy.nvim 支持 `tag = "v0.2.0"` 固定发行版，或 `version = "~0.2.0"` 选择 `0.2.x` 系列，具体见 [lazy.nvim 版本选项](https://lazy.folke.io/spec#spec-versioning)。`v0.1.0` 使用旧的 `claude.nvim` 名称与接口，`v0.2.0` 起改为 `clay.nvim`；迁移方式见变更日志。本地 `dir` 安装使用目录当前内容，应自行切换该 checkout；添加版本选项不会替本地目录切换发布标签。

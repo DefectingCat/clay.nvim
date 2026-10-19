@@ -96,6 +96,8 @@ CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy" make test-plugins
 
 测试使用独立 Neovim 进程；插件检查使用已有 checkout，缺失依赖显示 `SKIP`。
 
+推送与 PR 自动运行 CI；推送版本标签后，检查通过即按变更日志生成 GitHub Release。
+
 [更新日志](CHANGELOG.md) · [发布指南](RELEASING.md) · [使用文档](doc/clay.txt)
 
 ## 致谢

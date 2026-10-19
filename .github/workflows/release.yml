@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Publish GitHub Release
+    needs: checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate tag and extract release notes
+        shell: bash
+        run: |
+          test "$(git cat-file -t "refs/tags/$RELEASE_TAG")" = tag
+          test "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")" = "$(git rev-parse HEAD)"
+          git merge-base --is-ancestor HEAD "refs/remotes/origin/$DEFAULT_BRANCH"
+          python3 scripts/release_notes.py "$RELEASE_TAG" > "$RUNNER_TEMP/release-notes.md"
+      - name: Create release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view "$RELEASE_TAG" --json isDraft,url > "$RUNNER_TEMP/release.json"; then
+            jq --exit-status '.isDraft == false' "$RUNNER_TEMP/release.json"
+            echo "Release already published; leaving it unchanged."
+            jq --raw-output '.url' "$RUNNER_TEMP/release.json" >> "$GITHUB_STEP_SUMMARY"
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --title "$RELEASE_TAG" \
+              --notes-file "$RUNNER_TEMP/release-notes.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
