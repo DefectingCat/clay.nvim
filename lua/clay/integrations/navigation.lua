@@ -1,5 +1,13 @@
 local M = {}
 
+M.plugins = {
+  { url = "https://github.com/akinsho/bufferline.nvim", groups = { "^BufferLine" } },
+  { url = "https://github.com/folke/flash.nvim", groups = { "^Flash" } },
+  { url = "https://github.com/stevearc/oil.nvim", groups = { "^Oil" } },
+  { url = "https://github.com/SmiteshP/nvim-navic", groups = { "^Navic" } },
+  { url = "https://github.com/nvimdev/dashboard-nvim", groups = { "^Dashboard" } },
+}
+
 function M.get(c, opts)
   local bg = opts.transparent and "NONE" or c.sidebar
   local groups = {

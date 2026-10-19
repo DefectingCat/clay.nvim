@@ -1,5 +1,13 @@
 local M = {}
 
+M.plugins = {
+  { url = "https://github.com/folke/lazy.nvim", groups = { "^Lazy" } },
+  { url = "https://github.com/mason-org/mason.nvim", groups = { "^Mason" } },
+  { url = "https://github.com/folke/noice.nvim", groups = { "^Noice" } },
+  { url = "https://github.com/rcarriga/nvim-notify", groups = { "^Notify" } },
+  { url = "https://github.com/folke/trouble.nvim", groups = { "^Trouble" } },
+}
+
 function M.get(c)
   local groups = {
     LazyButton = { fg = c.secondary, bg = c.selection },

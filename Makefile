@@ -1,7 +1,7 @@
 NVIM ?= nvim
 FILE ?= examples/demo.lua
 
-.PHONY: test test-plugins test-languages test-release preview preview-parsers
+.PHONY: test test-plugins test-languages test-release docs preview preview-parsers
 test:
 	$(NVIM) --headless -u NONE -i NONE -n -l tests/run.lua
 
@@ -13,6 +13,9 @@ test-languages:
 
 test-release:
 	PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*.py'
+
+docs:
+	$(NVIM) --headless -u NONE -i NONE -n -l scripts/integration-docs.lua
 
 preview:
 	$(NVIM) -u scripts/preview.lua -i NONE -n -- "$(FILE)"

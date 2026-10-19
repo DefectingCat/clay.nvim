@@ -1,5 +1,46 @@
 local M = {}
 
+local modules = { "ui", "navigation", "editing" }
+
+-- Upstream plugins styled here; patterns match the highlight groups each one owns.
+M.plugins = {
+  { url = "https://github.com/hrsh7th/nvim-cmp", groups = { "^Cmp" } },
+  { url = "https://github.com/saghen/blink.cmp", groups = { "^BlinkCmp" } },
+  { url = "https://github.com/nvim-telescope/telescope.nvim", groups = { "^Telescope" } },
+  { url = "https://github.com/folke/snacks.nvim", groups = { "^Snacks" } },
+  { url = "https://github.com/nvim-neo-tree/neo-tree.nvim", groups = { "^NeoTree" } },
+  { url = "https://github.com/nvim-tree/nvim-tree.lua", groups = { "^NvimTree" } },
+  { url = "https://github.com/folke/which-key.nvim", groups = { "^WhichKey" } },
+  { url = "https://github.com/nvim-mini/mini.nvim", groups = { "^MiniIndentscope", "^MiniStatusline", "^MiniTabline" } },
+  { url = "https://github.com/lukas-reineke/indent-blankline.nvim", groups = { "^Ibl" } },
+  { url = "https://github.com/lewis6991/gitsigns.nvim", groups = { "^GitSigns" } },
+}
+
+---Every styled plugin across integration modules, merged by URL and sorted by name.
+---@return { name: string, url: string, groups: string[] }[]
+function M.list_plugins()
+  local by_url, result = {}, {}
+  local sources = { M.plugins }
+  for _, module in ipairs(modules) do
+    sources[#sources + 1] = require("clay.integrations." .. module).plugins
+  end
+  for _, plugins in ipairs(sources) do
+    for _, plugin in ipairs(plugins) do
+      local entry = by_url[plugin.url]
+      if not entry then
+        entry = { name = plugin.url:match("[^/]+$"), url = plugin.url, groups = {} }
+        by_url[plugin.url] = entry
+        result[#result + 1] = entry
+      end
+      vim.list_extend(entry.groups, plugin.groups)
+    end
+  end
+  table.sort(result, function(a, b)
+    return a.name:lower() < b.name:lower()
+  end)
+  return result
+end
+
 -- Defining a plugin's highlight groups does not load or configure that plugin.
 ---@param c clay.Palette
 ---@param opts clay.Config
@@ -119,9 +160,9 @@ function M.get(c, opts)
   for group, target in pairs(links) do
     groups[group] = { link = target }
   end
-  groups = vim.tbl_extend("force", groups, require("clay.integrations.ui").get(c, opts))
-  groups = vim.tbl_extend("force", groups, require("clay.integrations.navigation").get(c, opts))
-  groups = vim.tbl_extend("force", groups, require("clay.integrations.editing").get(c, opts))
+  for _, module in ipairs(modules) do
+    groups = vim.tbl_extend("force", groups, require("clay.integrations." .. module).get(c, opts))
+  end
   return groups
 end
 

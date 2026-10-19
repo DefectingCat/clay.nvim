@@ -200,6 +200,42 @@ local function run()
     equal(names, keys, "clay.PaletteName differs from lua/clay/palette.lua")
   end)
 
+  test("integration metadata owns every plugin group and the help table is current", function()
+    local integrations = require("clay.integrations")
+    local plugins = integrations.list_plugins()
+    local matched = {}
+    for name in pairs(integrations.get(colors, theme.get_options())) do
+      -- Clay helpers and legacy Tree-sitter captures are shared, not plugin-owned.
+      if not name:match("^Clay") and not name:match("^@") then
+        local owner
+        for _, plugin in ipairs(plugins) do
+          for _, pattern in ipairs(plugin.groups) do
+            if name:match(pattern) then
+              owner = plugin
+              matched[pattern] = true
+            end
+          end
+        end
+        assert(owner, name .. " is not owned by any plugin in M.plugins")
+      end
+    end
+    local repositories = {}
+    for _, plugin in ipairs(plugins) do
+      assert(plugin.url:match("^https://github%.com/[^/]+/[^/]+$"), "unexpected URL: " .. plugin.url)
+      repositories[plugin.url:sub(#"https://github.com/" + 1)] = true
+      for _, pattern in ipairs(plugin.groups) do
+        assert(matched[pattern], plugin.name .. " pattern matches no group: " .. pattern)
+      end
+    end
+    local pinned = vim.json.decode(table.concat(vim.fn.readfile(root .. "/.github/ci-dependencies.json"), "\n")).plugins
+    for name, dependency in pairs(pinned) do
+      assert(repositories[dependency.repository], name .. " is pinned for CI but missing from integration metadata")
+    end
+    local docs = dofile(root .. "/scripts/integration-docs.lua")
+    local help = vim.fn.readfile(docs.path)
+    equal(docs.update(help), help, "doc/clay.txt integration table is stale; run make docs")
+  end)
+
   test("terminal colors are optional and all 16 entries are populated when enabled", function()
     vim.g.terminal_color_3 = "#123456"
     load({ terminal_colors = false })

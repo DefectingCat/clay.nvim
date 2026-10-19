@@ -1,5 +1,17 @@
 local M = {}
 
+M.plugins = {
+  { url = "https://github.com/lukas-reineke/headlines.nvim", groups = { "^Headline$", "^CodeBlock$", "^Dash$", "^DoubleDash$", "^Quote$" } },
+  { url = "https://github.com/nvim-mini/mini.nvim", groups = { "^Mini" } },
+  { url = "https://github.com/gbprod/yanky.nvim", groups = { "^Yanky" } },
+  { url = "https://github.com/kosayoda/nvim-lightbulb", groups = { "^LightBulb" } },
+  { url = "https://github.com/nvimdev/indentmini.nvim", groups = { "^IndentLine" } },
+  { url = "https://github.com/folke/todo-comments.nvim", groups = { "^Todo" } },
+  { url = "https://github.com/HiPhish/rainbow-delimiters.nvim", groups = { "^RainbowDelimiter" } },
+  { url = "https://github.com/petertriho/nvim-scrollbar", groups = { "^Scrollbar" } },
+  { url = "https://github.com/airblade/vim-gitgutter", groups = { "^GitGutter" } },
+}
+
 function M.get(c)
   local groups = {
     Headline = { fg = c.bright, bg = c.cursorline, bold = true },

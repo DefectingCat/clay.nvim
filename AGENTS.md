@@ -20,6 +20,7 @@ There is no separate build step. Run commands from the repository root:
 - `make preview-parsers`: download and compile repository-local parsers. Requires Neovim 0.12+, nvim-treesitter, tree-sitter CLI 0.26.1+, a C compiler, curl, and tar; see README for configuration.
 - `make test-languages`: verify real definition/call captures across nine languages after preparing parsers.
 - `CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy" make test-plugins`: check existing plugin checkouts without installing them.
+- `make docs`: regenerate the plugin table in `doc/clay.txt` from each integration module's `M.plugins`. Every new integration needs an entry (repository URL plus group-name patterns); `make test` fails on unowned groups or a stale table.
 
 Override the executable with `NVIM=/path/to/nvim`.
 

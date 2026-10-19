@@ -75,14 +75,42 @@ workspace library (lazydev.nvim does this) to complete option names.
 
 INTEGRATIONS                                            *clay-integrations*
 
-Telescope, Snacks picker/dashboard/indent, nvim-cmp, blink.cmp, Neo-tree,
-nvim-tree, Gitsigns, which-key, indent-blankline, mini.statusline, mini.tabline,
-mini.indentscope, lazy.nvim, mason.nvim, Noice, nvim-notify, Trouble, bufferline,
-Oil, Flash, nvim-navic, dashboard-nvim, todo-comments, rainbow-delimiters,
-headlines, Yanky, nvim-scrollbar, nvim-lightbulb, vim-gitgutter, and indentmini
-have highlight mappings. Additional mini modules: jump, jump2d, starter,
-surround, trailspace, cursorword, and diff. Plugins can add or override groups;
-file icons can use separate third-party colors.
+These plugins have highlight mappings:
+
+Plugin                   Repository ~
+blink.cmp                github.com/saghen/blink.cmp
+bufferline.nvim          github.com/akinsho/bufferline.nvim
+dashboard-nvim           github.com/nvimdev/dashboard-nvim
+flash.nvim               github.com/folke/flash.nvim
+gitsigns.nvim            github.com/lewis6991/gitsigns.nvim
+headlines.nvim           github.com/lukas-reineke/headlines.nvim
+indent-blankline.nvim    github.com/lukas-reineke/indent-blankline.nvim
+indentmini.nvim          github.com/nvimdev/indentmini.nvim
+lazy.nvim                github.com/folke/lazy.nvim
+mason.nvim               github.com/mason-org/mason.nvim
+mini.nvim                github.com/nvim-mini/mini.nvim
+neo-tree.nvim            github.com/nvim-neo-tree/neo-tree.nvim
+noice.nvim               github.com/folke/noice.nvim
+nvim-cmp                 github.com/hrsh7th/nvim-cmp
+nvim-lightbulb           github.com/kosayoda/nvim-lightbulb
+nvim-navic               github.com/SmiteshP/nvim-navic
+nvim-notify              github.com/rcarriga/nvim-notify
+nvim-scrollbar           github.com/petertriho/nvim-scrollbar
+nvim-tree.lua            github.com/nvim-tree/nvim-tree.lua
+oil.nvim                 github.com/stevearc/oil.nvim
+rainbow-delimiters.nvim  github.com/HiPhish/rainbow-delimiters.nvim
+snacks.nvim              github.com/folke/snacks.nvim
+telescope.nvim           github.com/nvim-telescope/telescope.nvim
+todo-comments.nvim       github.com/folke/todo-comments.nvim
+trouble.nvim             github.com/folke/trouble.nvim
+vim-gitgutter            github.com/airblade/vim-gitgutter
+which-key.nvim           github.com/folke/which-key.nvim
+yanky.nvim               github.com/gbprod/yanky.nvim
+
+Snacks covers picker, dashboard, and indent. mini.nvim covers statusline,
+tabline, indentscope, jump, jump2d, starter, surround, trailspace, cursorword,
+and diff. Plugins can add or override groups; file icons can use separate
+third-party colors.
 
 Rainbow delimiters use neutral shades for nesting. TODO, Git, and diagnostics
 stay grayscale; active jump labels and interaction cues use Clay.
