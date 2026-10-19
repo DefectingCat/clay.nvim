@@ -48,7 +48,9 @@ remains the accent for function definitions and UI focus in restrained mode.
 Transparency is enabled by default. Set transparent=false for a solid #111315
 editor background (RGB 17, 19, 21) and solid sidebar backgrounds. The actual
 opacity is controlled by your terminal or GUI.
-Transparent mode retains opaque popups, status bars, and selections. The theme
+Transparent mode retains opaque popups, status bars, and selections.
+Transparent window backgrounds set blend=0, so floats that reuse them with
+'winblend' (such as noice's mini view) do not show the text beneath. The theme
 sets 'background' to dark and enables 'termguicolors'. It does not change layout,
 diagnostic settings, 'guicursor', or install/configure other plugins.
 

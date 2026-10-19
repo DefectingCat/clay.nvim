@@ -5,11 +5,14 @@ local M = {}
 ---@return clay.Highlights
 function M.get(c, opts)
   local bg = opts.transparent and "NONE" or c.bg
+  -- An unset background cannot blend: a float with 'winblend' (noice's mini
+  -- view uses 30) would show the text beneath. blend=0 keeps it legible.
+  local blend = opts.transparent and 0 or nil
   local definition = opts.accent == "minimal" and c.bright or c.clay
   local call = opts.accent == "expressive" and c.clay or c.muted
   local groups = {
-    Normal = { fg = c.fg, bg = bg },
-    NormalNC = { fg = c.fg, bg = bg },
+    Normal = { fg = c.fg, bg = bg, blend = blend },
+    NormalNC = { fg = c.fg, bg = bg, blend = blend },
     NormalFloat = { fg = c.fg, bg = c.float },
     FloatBorder = { fg = c.float_border, bg = c.float },
     FloatTitle = { fg = c.clay, bg = c.float },
@@ -62,7 +65,7 @@ function M.get(c, opts)
     ModeMsg = { fg = c.clay, bold = true },
     MoreMsg = { fg = c.clay },
     Question = { fg = c.clay },
-    MsgArea = { fg = c.fg, bg = bg },
+    MsgArea = { fg = c.fg, bg = bg, blend = blend },
     MsgSeparator = { fg = c.border, bg = c.sidebar },
     ErrorMsg = { fg = c.bright, bold = true },
     WarningMsg = { fg = c.secondary, bold = true },

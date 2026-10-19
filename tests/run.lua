@@ -128,7 +128,15 @@ local function run()
     end
     equal(hl("NormalFloat").bg, color(colors.float))
     equal(hl("Pmenu").bg, color(colors.float))
+    -- Window backgrounds left unset must not let blended floats show the text beneath.
+    for _, name in ipairs({ "Normal", "NormalNC", "MsgArea", "ClaySidebar", "NoiceMini", "TroubleNormal" }) do
+      equal(hl(name).blend, 0, name .. " must not blend while transparent")
+    end
+    equal(hl("NormalFloat").blend, nil)
     load({ transparent = false })
+    for _, name in ipairs({ "Normal", "MsgArea", "ClaySidebar", "NoiceMini" }) do
+      equal(hl(name).blend, nil, name .. " should honor 'winblend' when opaque")
+    end
     equal(hl("Normal").bg, color(colors.bg))
     equal(hl("NeoTreeNormal").bg, color(colors.sidebar))
     equal(hl("NvimTreeNormal").bg, color(colors.sidebar))

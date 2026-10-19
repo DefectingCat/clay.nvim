@@ -47,7 +47,8 @@ end
 ---@return clay.Highlights
 function M.get(c, opts)
   local groups = {
-    ClaySidebar = { fg = c.fg, bg = opts.transparent and "NONE" or c.sidebar },
+    -- blend=0 for the same reason as Normal: unset backgrounds cannot blend.
+    ClaySidebar = { fg = c.fg, bg = opts.transparent and "NONE" or c.sidebar, blend = opts.transparent and 0 or nil },
     ClaySelection = { fg = c.bright, bg = c.selection },
     ClayMatch = { fg = c.clay, bold = true },
     CmpItemAbbr = { fg = c.secondary },
