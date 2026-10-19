@@ -123,17 +123,20 @@ local function run()
   test("background defaults to transparent and can switch to opaque and back", function()
     load()
     equal(theme.get_palette().bg, "#111315")
-    for _, name in ipairs({ "Normal", "NormalNC", "SignColumn", "FoldColumn", "WinBar", "MsgArea", "NeoTreeNormal", "NeoTreeNormalNC", "NvimTreeNormal", "NvimTreeNormalNC", "TroubleNormal", "NoiceSplit", "BufferLineFill", "BufferLineBuffer" }) do
+    for _, name in ipairs({ "Normal", "SignColumn", "FoldColumn", "WinBar", "MsgArea", "NeoTreeNormal", "NeoTreeNormalNC", "NvimTreeNormal", "NvimTreeNormalNC", "TroubleNormal", "NoiceSplit", "BufferLineFill", "BufferLineBuffer" }) do
       equal(hl(name).bg, nil, name .. " should be transparent by default")
     end
     equal(hl("NormalFloat").bg, color(colors.float))
     equal(hl("Pmenu").bg, color(colors.float))
     -- Window backgrounds left unset must not let blended floats show the text beneath.
-    for _, name in ipairs({ "Normal", "NormalNC", "MsgArea", "ClaySidebar", "NoiceMini", "TroubleNormal" }) do
+    for _, name in ipairs({ "Normal", "MsgArea", "ClaySidebar", "NoiceMini", "TroubleNormal" }) do
       equal(hl(name).blend, 0, name .. " must not blend while transparent")
     end
     equal(hl("NormalFloat").blend, nil)
+    -- Neovim draws unfocused floats with NormalNC ahead of NormalFloat.
+    equal(hl("NormalNC"), {}, "NormalNC would override NormalFloat in unfocused floats")
     load({ transparent = false })
+    equal(hl("NormalNC"), {}, "NormalNC would override NormalFloat in unfocused floats")
     for _, name in ipairs({ "Normal", "MsgArea", "ClaySidebar", "NoiceMini" }) do
       equal(hl(name).blend, nil, name .. " should honor 'winblend' when opaque")
     end

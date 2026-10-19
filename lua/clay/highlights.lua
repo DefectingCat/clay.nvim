@@ -11,8 +11,9 @@ function M.get(c, opts)
   local definition = opts.accent == "minimal" and c.bright or c.clay
   local call = opts.accent == "expressive" and c.clay or c.muted
   local groups = {
+    -- NormalNC stays unset: Neovim applies it to unfocused floats ahead of
+    -- NormalFloat, which would give hover and diagnostic popups the editor background.
     Normal = { fg = c.fg, bg = bg, blend = blend },
-    NormalNC = { fg = c.fg, bg = bg, blend = blend },
     NormalFloat = { fg = c.fg, bg = c.float },
     FloatBorder = { fg = c.float_border, bg = c.float },
     FloatTitle = { fg = c.clay, bg = c.float },

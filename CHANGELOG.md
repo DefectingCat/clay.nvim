@@ -11,7 +11,8 @@
 
 ### 修复
 
-- 透明模式下，`Normal`、`NormalNC`、`MsgArea` 与侧栏背景设置 `blend = 0`，避免 noice 迷你消息等带 `winblend` 的浮窗透出下方文字；关闭透明后仍按 `winblend` 混合。
+- 透明模式下，`Normal`、`MsgArea` 与侧栏背景设置 `blend = 0`，避免 noice 迷你消息等带 `winblend` 的浮窗透出下方文字；关闭透明后仍按 `winblend` 混合。
+- 不再设置 `NormalNC`。Neovim 对未聚焦的浮窗优先使用 `NormalNC`，此前 LSP hover、诊断浮窗等未获焦点的浮窗会丢失浮窗底色、显示编辑区背景；普通非当前窗口的外观不变。
 
 ## [v0.2.1] - 2026-10-20
 
