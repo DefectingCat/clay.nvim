@@ -300,6 +300,27 @@ local function run()
     equal(docs.update(help), help, "doc/clay.txt integration table is stale; run make docs")
   end)
 
+  test("design system palette and terminal tables match the theme", function()
+    local spec = vim.fn.readfile(root .. "/design/clay-design-system.md")
+    local documented, terminal = {}, {}
+    for _, line in ipairs(spec) do
+      local key, value = line:match("^| `([%w_]+)` | `(#%x+)` |")
+      if key then
+        documented[key] = value
+      end
+      local index, name, ansi = line:match("^| (%d+) | [^|]+ | `([%w_]+)` | `(#%x+)` |")
+      if index then
+        equal(ansi, colors[name], "terminal table row " .. index .. " has a stale value")
+        terminal[tonumber(index)] = colors[name]
+      end
+    end
+    equal(documented, require("clay.palette"), "design/clay-design-system.md palette tables are stale")
+    load()
+    for index = 0, 15 do
+      equal(vim.g["terminal_color_" .. index], terminal[index], "terminal table row " .. index)
+    end
+  end)
+
   test("terminal colors are optional and all 16 entries are populated when enabled", function()
     vim.g.terminal_color_3 = "#123456"
     load({ terminal_colors = false })

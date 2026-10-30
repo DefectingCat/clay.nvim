@@ -9,6 +9,7 @@ This repository develops **clay.nvim**, a Lua colorscheme for Neovim 0.10.4+.
 - `lua/lualine/themes/clay.lua` provides the lualine theme.
 - `tests/` contains core, language, and real-plugin checks; `scripts/` contains isolated preview tooling.
 - `examples/demo.*` supplies language samples; `design/clay-grayscale.html` is the interactive design reference.
+- `design/clay-design-system.md` is the design specification (palette roles, semantic mappings, ANSI table, porting rules). Palette changes must update it; `make test` checks its palette and terminal tables against the theme.
 - `README.md` and `doc/clay.txt` document usage. Keep generated `.preview/site/`, `doc/tags`, and local reference checkouts under `others/` untracked.
 
 ## Build, Test, and Development Commands

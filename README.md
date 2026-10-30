@@ -98,7 +98,7 @@ CLAY_PLUGIN_ROOTS="$HOME/.local/share/nvim/lazy" make test-plugins
 
 推送与 PR 自动运行 CI；推送版本标签后，检查通过即按变更日志生成 GitHub Release。
 
-[更新日志](CHANGELOG.md) · [发布指南](RELEASING.md) · [使用文档](doc/clay.txt)
+[更新日志](CHANGELOG.md) · [发布指南](RELEASING.md) · [使用文档](doc/clay.txt) · [设计规范](design/clay-design-system.md)（移植到其他软件时参照）
 
 ## 致谢
 
