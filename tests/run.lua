@@ -304,11 +304,12 @@ local function run()
     local spec = vim.fn.readfile(root .. "/design/clay-design-system.md")
     local documented, terminal = {}, {}
     for _, line in ipairs(spec) do
-      local key, value = line:match("^| `([%w_]+)` | `(#%x+)` |")
+      -- Tolerate column padding added by Markdown table formatters.
+      local key, value = line:match("^|%s*`([%w_]+)`%s*|%s*`(#%x+)`%s*|")
       if key then
         documented[key] = value
       end
-      local index, name, ansi = line:match("^| (%d+) | [^|]+ | `([%w_]+)` | `(#%x+)` |")
+      local index, name, ansi = line:match("^|%s*(%d+)%s*|[^|]+|%s*`([%w_]+)`%s*|%s*`(#%x+)`%s*|")
       if index then
         equal(ansi, colors[name], "terminal table row " .. index .. " has a stale value")
         terminal[tonumber(index)] = colors[name]
