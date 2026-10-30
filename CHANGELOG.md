@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [v0.5.0] - 2026-10-30
+
 ### 新增
 
 - 适配 Neogit：Diff、行内差异、hunk 标题、文件状态和提交图改用 Clay 灰阶，弹窗按键用 Clay。此前 Neogit 会把灰色的 `ErrorMsg` 与 `String` 重新着色，行内差异显示成红色和橙色，表面带冷色偏。
@@ -12,6 +14,12 @@
 ### 变更
 
 - mini.pick 与 mini.files 当前项改用 `ClaySelection`，原先的 `CursorLine` 在浮窗底色上几乎不可见；mini.pick 匹配字符改用 `ClayMatch`、提示符用 Clay，与 Telescope 一致。mini.files 聚焦窗口标题保持 Clay，其余窗口标题变暗。mini.clue 的按键改用 Clay，与 which-key 一致。
+
+### 发布验证
+
+- Neovim 0.12.6 与 0.10.4：各 20 项核心检查通过；发布工具 5 项检查通过；0.12.6 上九种语言检查及缺失 parser 回退检查通过。
+- 真实插件检查：0.12.6 与 0.10.4 上本机仅 8 个插件有 checkout，各 8 项通过、15 项跳过（Neogit、codediff.nvim、md-render.nvim、mini.nvim 均无本地 checkout）；其余插件由推送后的 CI 覆盖，发布前未在本机验证。
+- 配色变化限于新增插件适配及 mini 系列选中项/提示符，默认主题色板未变，未做 `make preview` 人工预览。
 
 ## [v0.4.0] - 2026-10-30
 
