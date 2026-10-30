@@ -50,7 +50,7 @@ function M.get(c, opts)
     groups["BufferLineIndicator" .. state] = { fg = selected and c.clay or c.border, bg = surface }
     groups["BufferLineModified" .. state] = { fg = c.secondary, bg = surface }
     groups["BufferLinePick" .. state] = { fg = c.bg, bg = c.clay, bold = true }
-    for severity, shade in pairs({ Error = c.bright, Warning = c.secondary, Info = c.secondary, Hint = c.comment }) do
+    for severity, shade in pairs({ Error = c.bright, Warning = c.secondary, Info = c.muted, Hint = c.comment }) do
       groups["BufferLine" .. severity .. state] = { fg = shade, bg = surface }
       groups["BufferLine" .. severity .. "Diagnostic" .. state] = { fg = shade, bg = surface }
     end

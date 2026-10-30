@@ -41,13 +41,21 @@ declaration/definition modifiers; regex syntax uses neutral Function highlights
 unless accent is 'expressive'.
 
 The grayscale hierarchy is inspired by lackluster.nvim. Variables use #cccccc,
-members and types use #aaaaaa, and keywords/calls/strings use #8e8e8e. Comments
-and punctuation use #7a7a7a. Keywords are not bold by default. Clay (#d97757)
-remains the accent for function definitions and UI focus in restrained mode.
+members and types use #aaaaaa, and keywords/calls use #8e8e8e. Strings use
+#b0978e, a gray tinted toward Clay, so they separate from keywords. Comments
+use #7a7a7a; punctuation and operators use the dimmer #686868. Keywords are not
+bold by default. Clay (#d97757) remains the accent for function definitions and
+UI focus in restrained mode.
 
-Transparency is enabled by default. Set transparent=false for a solid #111315
-editor background (RGB 17, 19, 21) and solid sidebar backgrounds. The actual
-opacity is controlled by your terminal or GUI.
+Git and diff text use three steps: added #e6e6e6, changed #aaaaaa, removed
+#8e8e8e. Diagnostics use error #e6e6e6, warn #aaaaaa, info #8e8e8e, and hint
+#7a7a7a. DiffAdd, DiffChange, DiffDelete, CursorLine, Search, Visual, and LSP
+reference backgrounds each use their own surface.
+
+Transparency is enabled by default. Set transparent=false for a solid #121212
+editor background and solid sidebar backgrounds. The actual opacity is
+controlled by your terminal or GUI. CursorLine keeps a fixed #1e1e1e; if your
+terminal background is close to it, override palette.cursorline.
 Transparent mode retains opaque popups, status bars, and selections.
 Float and popup borders share the float background, so 'winborder' and
 'pumborder' (Neovim 0.12) set to "solid" read as padding without extra setup.
@@ -56,13 +64,14 @@ Transparent window backgrounds set blend=0, so floats that reuse them with
 sets 'background' to dark and enables 'termguicolors'. It does not change layout,
 diagnostic settings, 'guicursor', or install/configure other plugins.
 
-Terminal colors are grayscale except yellow/bright yellow, which use Clay.
+Terminal colors are grayscale except red/bright red, which use Clay, so errors
+and diff removals stand apart from default text.
 terminal_colors=false leaves the existing palette untouched (does not restore a
 previous palette).
 
-Palette keys: bg, sidebar, float, cursorline, selection, statusline, border,
-float_border, fg, bright, secondary, muted, subtle, comment, gutter, clay,
-diff_add, diff_delete.
+Palette keys: bg, sidebar, float, cursorline, selection, search, reference,
+statusline, border, float_border, fg, bright, secondary, string, muted, subtle,
+comment, gutter, clay, diff_add, diff_change, diff_delete.
 
 Override entries replace complete highlights, including links. An empty table
 clears a highlight. The callback must return a highlight table.

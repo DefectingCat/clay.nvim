@@ -38,7 +38,7 @@ local function unchanged(expected, label)
   -- Also inspect groups created by the plugins, not only names defined by us:
   -- a stale/incorrect group name can otherwise leave an upstream rainbow intact.
   local palette = theme.get_palette()
-  local clay, canvas = tonumber(palette.clay:sub(2), 16), tonumber(palette.bg:sub(2), 16)
+  local clay, string_tint = tonumber(palette.clay:sub(2), 16), tonumber(palette.string:sub(2), 16)
   local prefixes = {
     "Lazy", "Mason", "Noice", "Notify", "Trouble", "BufferLine", "Oil", "Flash", "Navic", "Dashboard",
     "Todo", "RainbowDelimiter", "Headline", "Dash", "DoubleDash", "CodeBlock", "Quote", "Yanky",
@@ -51,7 +51,7 @@ local function unchanged(expected, label)
         local spec = vim.api.nvim_get_hl(0, { name = name, link = false })
         for _, key in ipairs({ "fg", "bg", "sp" }) do
           local value = spec[key]
-          if value and value ~= clay and value ~= canvas then
+          if value and value ~= clay and value ~= string_tint then
             local r, g, b = math.floor(value / 65536), math.floor(value / 256) % 256, value % 256
             assert(r == g and g == b, label .. " introduced a chromatic " .. name .. "." .. key)
           end

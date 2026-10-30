@@ -1,5 +1,5 @@
 ---@alias clay.Accent "minimal"|"restrained"|"expressive"
----@alias clay.PaletteName "bg"|"sidebar"|"float"|"cursorline"|"selection"|"statusline"|"border"|"float_border"|"fg"|"bright"|"secondary"|"muted"|"subtle"|"comment"|"gutter"|"clay"|"diff_add"|"diff_delete"
+---@alias clay.PaletteName "bg"|"sidebar"|"float"|"cursorline"|"selection"|"search"|"reference"|"statusline"|"border"|"float_border"|"fg"|"bright"|"secondary"|"string"|"muted"|"subtle"|"comment"|"gutter"|"clay"|"diff_add"|"diff_change"|"diff_delete"
 ---@alias clay.Palette table<clay.PaletteName, string>
 ---@alias clay.Highlights table<string, vim.api.keyset.highlight>
 ---@alias clay.Overrides clay.Highlights|fun(colors: clay.Palette, options: clay.Config): clay.Highlights
@@ -129,11 +129,12 @@ function M.load()
   end
 
   if opts.terminal_colors then
+    -- Red carries errors and diff removals, so it must not match default text.
     local terminal = {
-      colors.sidebar, colors.fg, colors.bright, colors.clay,
-      colors.secondary, colors.fg, colors.secondary, colors.fg,
-      colors.comment, colors.fg, colors.bright, colors.clay,
-      colors.secondary, colors.fg, colors.secondary, colors.bright,
+      colors.sidebar, colors.clay, colors.bright, colors.secondary,
+      colors.secondary, colors.muted, colors.secondary, colors.fg,
+      colors.comment, colors.clay, colors.bright, colors.fg,
+      colors.fg, colors.secondary, colors.fg, colors.bright,
     }
     for index, color in ipairs(terminal) do
       vim.g["terminal_color_" .. (index - 1)] = color

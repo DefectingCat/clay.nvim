@@ -98,7 +98,31 @@ local function run()
     equal(hl("StatusLine").bg, color(colors.statusline))
   end)
 
-  test("colors stay grayscale apart from the canvas and Clay and every link resolves", function()
+  test("related syntax, diff, diagnostic, and surface states stay distinguishable", function()
+    local function differ(a, b, key)
+      key = key or "fg"
+      local x, y = hl(a)[key], hl(b)[key]
+      assert(x and y and x ~= y, a .. " and " .. b .. " share " .. key .. " " .. vim.inspect(x))
+    end
+    differ("@string", "@keyword")
+    differ("@string", "@type")
+    differ("@comment", "@punctuation.bracket")
+    differ("@comment", "@operator")
+    differ("Added", "Changed")
+    differ("Changed", "Removed")
+    differ("Added", "Removed")
+    differ("DiagnosticWarn", "DiagnosticInfo")
+    differ("DiagnosticInfo", "DiagnosticHint")
+    for _, pair in ipairs({
+      { "DiffAdd", "DiffChange" }, { "DiffChange", "DiffDelete" }, { "DiffAdd", "DiffDelete" },
+      { "DiffChange", "CursorLine" }, { "DiffAdd", "CursorLine" }, { "DiffDelete", "CursorLine" },
+      { "Search", "Visual" }, { "LspReferenceText", "CursorLine" }, { "CursorLine", "NormalFloat" },
+    }) do
+      differ(pair[1], pair[2], "bg")
+    end
+  end)
+
+  test("colors stay grayscale apart from Clay and the string tint, and every link resolves", function()
     local groups = vim.tbl_extend("force", require("clay.highlights").get(colors, theme.get_options()), require("clay.integrations").get(colors, theme.get_options()))
     for name, spec in pairs(groups) do
       if spec.link then
@@ -112,7 +136,7 @@ local function run()
       end
       for _, key in ipairs({ "fg", "bg", "sp" }) do
         local value = hl(name)[key]
-        if value and value ~= color(colors.clay) and value ~= color(colors.bg) then
+        if value and value ~= color(colors.clay) and value ~= color(colors.string) then
           local r, g, b = math.floor(value / 65536), math.floor(value / 256) % 256, value % 256
           assert(r == g and g == b, name .. " contains a chromatic " .. key)
         end
@@ -125,7 +149,7 @@ local function run()
 
   test("background defaults to transparent and can switch to opaque and back", function()
     load()
-    equal(theme.get_palette().bg, "#111315")
+    equal(theme.get_palette().bg, "#121212")
     for _, name in ipairs({ "Normal", "SignColumn", "FoldColumn", "WinBar", "MsgArea", "NeoTreeNormal", "NeoTreeNormalNC", "NvimTreeNormal", "NvimTreeNormalNC", "TroubleNormal", "NoiceSplit", "BufferLineFill", "BufferLineBuffer" }) do
       equal(hl(name).bg, nil, name .. " should be transparent by default")
     end
@@ -198,7 +222,7 @@ local function run()
       return { Comment = { link = "String" }, ClayTest = { fg = "#abcdef", bold = true } }
     end })
     equal(hl("Comment", true).link, "String")
-    equal(hl("Comment").fg, color(colors.muted))
+    equal(hl("Comment").fg, color(colors.string))
     equal(hl("ClayTest").fg, color("#abcdef"))
     equal(theme.get_palette().clay, colors.clay)
     equal(theme.get_options().accent, "restrained")
@@ -284,7 +308,10 @@ local function run()
     for index = 0, 15 do
       assert(vim.g["terminal_color_" .. index]:match("^#%x%x%x%x%x%x$"))
     end
-    equal(vim.g.terminal_color_3, colors.clay)
+    equal(vim.g.terminal_color_1, colors.clay)
+    for _, index in ipairs({ 1, 2, 9, 10 }) do
+      assert(vim.g["terminal_color_" .. index] ~= vim.g.terminal_color_7, "terminal color " .. index .. " matches default text")
+    end
   end)
 
   test("lualine mode colors remain Clay and nested tables are independent", function()

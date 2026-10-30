@@ -19,7 +19,7 @@ function M.get(c)
     MiniJump2dSpot = { fg = c.bg, bg = c.clay, bold = true, nocombine = true },
     MiniJump2dSpotAhead = { fg = c.secondary, bg = c.selection, nocombine = true },
     MiniTrailspace = { fg = c.bright, bg = c.selection },
-    MiniCursorword = { bg = c.cursorline, underline = true },
+    MiniCursorword = { bg = c.reference, underline = true },
     MiniCursorwordCurrent = { underline = true },
     ScrollbarHandle = { bg = c.selection, blend = 30 },
     LightBulbFloatWin = { fg = c.clay, bg = c.float },
@@ -54,7 +54,7 @@ function M.get(c)
   for name, fg in pairs({ Red = c.subtle, Yellow = c.secondary, Blue = c.muted, Orange = c.bright, Green = c.fg, Violet = c.comment, Cyan = c.secondary }) do
     groups["RainbowDelimiter" .. name] = { fg = fg }
   end
-  for mark, fg in pairs({ Cursor = c.clay, Search = c.clay, Error = c.bright, Warn = c.secondary, Info = c.secondary, Hint = c.comment, Misc = c.muted, GitAdd = c.bright, GitChange = c.fg, GitDelete = c.secondary }) do
+  for mark, fg in pairs({ Cursor = c.clay, Search = c.clay, Error = c.bright, Warn = c.secondary, Info = c.muted, Hint = c.comment, Misc = c.muted, GitAdd = c.bright, GitChange = c.secondary, GitDelete = c.muted }) do
     groups["Scrollbar" .. mark] = { fg = fg }
     groups["Scrollbar" .. mark .. "Handle"] = { fg = fg, bg = c.selection, blend = 30 }
   end

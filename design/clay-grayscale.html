@@ -1,6 +1,6 @@
 <div id="clay-grayscale-preview">
   <style>
-    #clay-grayscale-preview { --cn-bg: #181818; --cn-side: #141414; --cn-panel: #202020; --cn-line: #222222; --cn-select: #343434; --cn-border: #333333; --cn-fg: #d4d4d4; --cn-bright: #e6e6e6; --cn-secondary: #a8a8a8; --cn-comment: #8a8a8a; --cn-gutter: #686868; --cn-clay: #d97757; --cn-def: #d97757; --cn-call: #d4d4d4; --cn-warm-bg: #30231f; width: 100%; }
+    #clay-grayscale-preview { --cn-bg: #121212; --cn-side: #101010; --cn-float: #1a1a1a; --cn-panel: #242424; --cn-line: #1e1e1e; --cn-select: #363636; --cn-border: #2a2a2a; --cn-float-border: #444444; --cn-diff-add: #2d2d2d; --cn-diff-delete: #181818; --cn-fg: #cccccc; --cn-bright: #e6e6e6; --cn-secondary: #aaaaaa; --cn-string: #b0978e; --cn-muted: #8e8e8e; --cn-comment: #7a7a7a; --cn-subtle: #686868; --cn-gutter: #555555; --cn-clay: #d97757; --cn-def: #d97757; --cn-call: #8e8e8e; width: 100%; }
     #clay-grayscale-preview * { box-sizing: border-box; }
     #clay-grayscale-preview .cn-app { color: var(--cn-fg); background: var(--cn-bg); font: 13px/1.85 "JetBrains Mono", "Cascadia Code", "DejaVu Sans Mono", monospace; border: 1px solid var(--cn-border); border-radius: 8px; overflow: clip; }
     #clay-grayscale-preview button { font: inherit; }
@@ -8,7 +8,7 @@
     #clay-grayscale-preview .cn-title { color: var(--cn-bright); letter-spacing: -.3px; }
     #clay-grayscale-preview .cn-subtitle { color: var(--cn-comment); font: 12px/1.5 system-ui, sans-serif; }
     #clay-grayscale-preview .cn-workspace { display: grid; grid-template-columns: 180px minmax(0, 1fr); min-height: 590px; }
-    #clay-grayscale-preview .cn-tree { background: var(--cn-side); border-right: 1px solid #2a2a2a; padding: 17px 0; }
+    #clay-grayscale-preview .cn-tree { background: var(--cn-side); border-right: 1px solid var(--cn-border); padding: 17px 0; }
     #clay-grayscale-preview .cn-tree-title { padding: 0 18px 12px; color: var(--cn-secondary); }
     #clay-grayscale-preview .cn-folder { color: var(--cn-secondary); padding: 0 18px; }
     #clay-grayscale-preview .cn-file { width: 100%; display: block; text-align: left; color: var(--cn-comment); border: 0; background: transparent; padding: 3px 20px 3px 36px; }
@@ -26,19 +26,23 @@
     #clay-grayscale-preview .cn-current .cn-number { color: var(--cn-clay); }
     #clay-grayscale-preview .cn-sign { text-align: center; color: var(--cn-secondary); }
     #clay-grayscale-preview .cn-code { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-    #clay-grayscale-preview .cn-keyword { color: var(--cn-bright); font-weight: 700; }
+    #clay-grayscale-preview .cn-keyword { color: var(--cn-muted); }
     #clay-grayscale-preview .cn-comment { color: var(--cn-comment); font-style: italic; }
-    #clay-grayscale-preview .cn-string { color: var(--cn-secondary); }
-    #clay-grayscale-preview .cn-punct { color: var(--cn-secondary); }
+    #clay-grayscale-preview .cn-string { color: var(--cn-string); }
+    #clay-grayscale-preview .cn-punct { color: var(--cn-subtle); }
     #clay-grayscale-preview .cn-definition { color: var(--cn-def); }
     #clay-grayscale-preview .cn-call { color: var(--cn-call); }
-    #clay-grayscale-preview .cn-constant { color: var(--cn-bright); }
+    #clay-grayscale-preview .cn-constant { color: var(--cn-secondary); }
     #clay-grayscale-preview .cn-selected { background: var(--cn-select); color: var(--cn-bright); }
     #clay-grayscale-preview .cn-cursor { background: var(--cn-clay); color: var(--cn-bg); }
     #clay-grayscale-preview .cn-error { text-decoration: underline wavy var(--cn-bright); text-underline-offset: 4px; }
     #clay-grayscale-preview .cn-virtual { color: var(--cn-comment); }
-    #clay-grayscale-preview .cn-added { background: #242424; }
-    #clay-grayscale-preview .cn-removed { background: #1c1c1c; color: var(--cn-secondary); }
+    #clay-grayscale-preview .cn-diag-error { color: var(--cn-bright); }
+    #clay-grayscale-preview .cn-diag-warn { color: var(--cn-secondary); }
+    #clay-grayscale-preview .cn-diag-info { color: var(--cn-muted); }
+    #clay-grayscale-preview .cn-diag-hint { color: var(--cn-comment); }
+    #clay-grayscale-preview .cn-added { background: var(--cn-diff-add); }
+    #clay-grayscale-preview .cn-removed { background: var(--cn-diff-delete); color: var(--cn-muted); }
     #clay-grayscale-preview .cn-diff-head { color: var(--cn-bright); }
     #clay-grayscale-preview .cn-status { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; min-height: 28px; background: var(--cn-panel); color: var(--cn-secondary); font-size: 12px; }
     #clay-grayscale-preview .cn-status span { padding: 2px 12px; }
@@ -46,7 +50,7 @@
     #clay-grayscale-preview .cn-status .cn-status-file { flex: 1; color: var(--cn-fg); }
     #clay-grayscale-preview .cn-command { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; min-height: 33px; padding: 3px 14px; color: var(--cn-comment); }
     #clay-grayscale-preview .cn-command button { color: var(--cn-secondary); padding: 0; border: 0; background: transparent; text-align: left; }
-    #clay-grayscale-preview .cn-dialog { position: absolute; z-index: 2; background: var(--cn-panel); border: 1px solid #484848; border-radius: 3px; color: var(--cn-fg); }
+    #clay-grayscale-preview .cn-dialog { position: absolute; z-index: 2; background: var(--cn-float); border: 1px solid var(--cn-float-border); border-radius: 3px; color: var(--cn-fg); }
     #clay-grayscale-preview .cn-dialog[hidden] { display: none; }
     #clay-grayscale-preview .cn-completion { top: 238px; left: 31%; width: min(330px, 65%); padding: 5px 0; }
     #clay-grayscale-preview .cn-option { padding: 2px 13px; display: flex; justify-content: space-between; gap: 8px; }
@@ -124,10 +128,11 @@
     <div class="cn-command"><button class="cursor-interaction" type="button" data-open-search>:Telescope find_files</button><span class="cn-scene-label">克制点缀</span></div>
   </div>
   <div class="cn-palette" aria-label="主题核心色板">
-    <span class="cn-swatch"><span class="cn-chip" style="background:#181818"></span>Canvas #181818</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#343434"></span>Selection #343434</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#8a8a8a"></span>Comment #8A8A8A</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#d4d4d4"></span>Text #D4D4D4</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#121212"></span>Canvas #121212</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#363636"></span>Selection #363636</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#7a7a7a"></span>Comment #7A7A7A</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#b0978e"></span>String #B0978E</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:#cccccc"></span>Text #CCCCCC</span>
     <span class="cn-swatch"><span class="cn-chip" style="background:#d97757"></span>Clay #D97757</span>
   </div>
   <script>
@@ -214,10 +219,10 @@
           '',
           c('--- Diagnostics · grayscale ---'),
           '',
-          token('constant', 'E') + '  client.ts:24   Type mismatch',
-          token('string', 'W') + '  client.ts:24   Unused variable',
-          token('string', 'I') + '  config.lua:6   Default applied',
-          token('comment', 'H') + '  config.lua:7   Simplify expression',
+          token('diag-error', 'E') + '  client.ts:24   Type mismatch',
+          token('diag-warn', 'W') + '  client.ts:24   Unused variable',
+          token('diag-info', 'I') + '  config.lua:6   Default applied',
+          token('diag-hint', 'H') + '  config.lua:7   Simplify expression',
           '',
           c('--- Visual selection ---'),
           '',
@@ -242,7 +247,7 @@
       }
       function render() {
         root.style.setProperty('--cn-def', state.intensity === 'ui' ? '#e6e6e6' : '#d97757');
-        root.style.setProperty('--cn-call', state.intensity === 'expressive' ? '#d97757' : '#d4d4d4');
+        root.style.setProperty('--cn-call', state.intensity === 'expressive' ? '#d97757' : '#8e8e8e');
         const buffer = buffers[state.buffer];
         root.querySelectorAll('[data-buffer]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.buffer === state.buffer)));
         root.querySelector('.cn-breadcrumb').textContent = buffer.file.replaceAll('/', ' / ');

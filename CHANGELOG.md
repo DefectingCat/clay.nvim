@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### 变更
+
+- 字符串改用偏 Clay 色相的暖灰 `#B0978E`（新增色板键 `string`），不再与关键字、函数调用同为 `#8E8E8E`。
+- 标点与运算符（`subtle`）由 `#7A7A7A` 调暗为 `#686868`，与注释区分；`bright` 由 `#DDDDDD` 提亮为 `#E6E6E6`。
+- Git 与 Diff 文本改为三档：新增 `bright`、修改 `secondary`、删除 `muted`；`DiagnosticInfo` 改用 `muted`，与 Warn 区分。
+- 不透明背景由带冷色的 `#111315` 改为中性 `#121212`，与侧栏、浮窗同色调。
+- `CursorLine` 提亮为 `#1E1E1E`，高于浮窗底色，在浮窗内也可见；选区提亮为 `#363636`。
+- `DiffChange`、`Search`、LSP 引用改用独立的 `diff_change`、`search`、`reference` 背景，不再与 `CursorLine` 或 `Visual` 相同；`DiffAdd` 与 `DiffDelete` 分别调整为 `#2D2D2D`、`#181818`。
+- 终端色板的红色与亮红改为 Clay（原为黄色），报错与 diff 删除行不再与默认文字同色。
+
 ## [v0.3.0] - 2026-10-20
 
 ### 新增

@@ -35,7 +35,7 @@ function M.get(c, opts)
     ColorColumn = { bg = c.cursorline },
     MatchParen = { fg = c.bright, bg = c.selection, bold = true },
     Visual = { fg = c.bright, bg = c.selection },
-    Search = { fg = c.bright, bg = c.selection, underline = true },
+    Search = { fg = c.bright, bg = c.search, underline = true },
     CurSearch = { fg = c.bg, bg = c.clay, bold = true },
     Substitute = { fg = c.bg, bg = c.clay },
     Pmenu = { fg = c.secondary, bg = c.float },
@@ -73,12 +73,12 @@ function M.get(c, opts)
     OkMsg = { fg = c.fg },
     QuickFixLine = { fg = c.bright, bg = c.selection },
     DiffAdd = { bg = c.diff_add },
-    DiffChange = { bg = c.cursorline },
+    DiffChange = { bg = c.diff_change },
     DiffDelete = { fg = c.secondary, bg = c.diff_delete },
     DiffText = { fg = c.bright, bg = c.selection, bold = true },
     Added = { fg = c.bright },
-    Removed = { fg = c.secondary },
-    Changed = { fg = c.fg },
+    Removed = { fg = c.muted },
+    Changed = { fg = c.secondary },
     SpellBad = { sp = c.bright, undercurl = true },
     SpellCap = { sp = c.secondary, undercurl = true },
     SpellLocal = { sp = c.comment, underline = true },
@@ -86,7 +86,7 @@ function M.get(c, opts)
 
     Comment = { fg = c.comment, italic = opts.italic_comments },
     Constant = { fg = c.secondary },
-    String = { fg = c.muted },
+    String = { fg = c.string },
     Identifier = { fg = c.fg },
     -- Regex syntax often uses Function for calls as well as declarations.
     Function = { fg = call },
@@ -136,9 +136,9 @@ function M.get(c, opts)
     ["@lsp.typemod.function.definition"] = { fg = definition },
     ["@lsp.typemod.method.declaration"] = { fg = definition },
     ["@lsp.typemod.method.definition"] = { fg = definition },
-    LspReferenceText = { bg = c.cursorline },
-    LspReferenceRead = { bg = c.cursorline },
-    LspReferenceWrite = { bg = c.cursorline, underline = true },
+    LspReferenceText = { bg = c.reference },
+    LspReferenceRead = { bg = c.reference },
+    LspReferenceWrite = { bg = c.reference, underline = true },
     LspReferenceTarget = { bg = c.selection },
     LspInlayHint = { fg = c.comment },
     LspCodeLens = { fg = c.comment },
@@ -209,7 +209,7 @@ function M.get(c, opts)
   for level = 1, 6 do
     links["@markup.heading." .. level] = "Title"
   end
-  for severity, color in pairs({ Error = c.bright, Warn = c.secondary, Info = c.secondary, Hint = c.comment, Ok = c.fg }) do
+  for severity, color in pairs({ Error = c.bright, Warn = c.secondary, Info = c.muted, Hint = c.comment, Ok = c.fg }) do
     local base = "Diagnostic" .. severity
     groups[base] = { fg = color }
     groups["DiagnosticUnderline" .. severity] = { sp = color, undercurl = true }
