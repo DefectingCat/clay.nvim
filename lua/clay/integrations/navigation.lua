@@ -6,6 +6,7 @@ M.plugins = {
   { url = "https://github.com/stevearc/oil.nvim", groups = { "^Oil" } },
   { url = "https://github.com/SmiteshP/nvim-navic", groups = { "^Navic" } },
   { url = "https://github.com/nvimdev/dashboard-nvim", groups = { "^Dashboard" } },
+  { url = "https://github.com/MagicDuck/grug-far.nvim", groups = { "^GrugFar" } },
 }
 
 function M.get(c, opts)
@@ -37,6 +38,8 @@ function M.get(c, opts)
     DashboardProjectTitle = "Title", DashboardProjectTitleIcon = "Directory", DashboardProjectIcon = "Directory",
     DashboardMruTitle = "Title", DashboardMruTitleIcon = "Directory", DashboardMruIcon = "Directory",
     DashboardFiles = "Identifier", DashboardRecentProjectIcon = "Directory",
+    GrugFarResultsAddIndicator = "Added", GrugFarResultsChangeIndicator = "Changed",
+    GrugFarResultsRemoveIndicator = "Removed",
   }
   for _, state in ipairs({ "", "Visible", "Selected" }) do
     local selected = state == "Selected"

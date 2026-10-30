@@ -7,6 +7,11 @@
 ### 新增
 
 - 适配 Neogit：Diff、行内差异、hunk 标题、文件状态和提交图改用 Clay 灰阶，弹窗按键用 Clay。此前 Neogit 会把灰色的 `ErrorMsg` 与 `String` 重新着色，行内差异显示成红色和橙色，表面带冷色偏。
+- 适配 codediff.nvim、grug-far.nvim 和 md-render.nvim：codediff 的移动标记与文件状态、grug-far 的增删改指示符改用灰阶三档，md-render 的 `==高亮==` 改用 `Search`，不再出现蓝、红、绿、黄色。codediff 每次切换主题都会覆盖行级与字符级 diff 组，字符级需在其配置中设为 `DiffText`，见 `:help clay`。
+
+### 变更
+
+- mini.pick 与 mini.files 当前项改用 `ClaySelection`，原先的 `CursorLine` 在浮窗底色上几乎不可见；mini.pick 匹配字符改用 `ClayMatch`、提示符用 Clay，与 Telescope 一致。mini.files 聚焦窗口标题保持 Clay，其余窗口标题变暗。mini.clue 的按键改用 Clay，与 which-key 一致。
 
 ## [v0.4.0] - 2026-10-30
 

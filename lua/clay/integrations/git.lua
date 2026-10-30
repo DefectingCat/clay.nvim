@@ -2,6 +2,7 @@ local M = {}
 
 M.plugins = {
   { url = "https://github.com/NeogitOrg/neogit", groups = { "^Neogit" } },
+  { url = "https://github.com/esmuellert/codediff.nvim", groups = { "^CodeDiff" } },
 }
 
 -- Neogit derives missing groups by re-saturating ErrorMsg and String, which
@@ -41,6 +42,11 @@ function M.get(c)
     NeogitUnpulledFrom = "Title", NeogitFilePath = "Directory", NeogitActiveItem = "ClaySelection",
     NeogitPopupSwitchKey = "ClayAccent", NeogitPopupOptionKey = "ClayAccent",
     NeogitPopupConfigKey = "ClayAccent", NeogitPopupActionKey = "ClayAccent",
+    -- codediff force-sets its line and character groups; configure those via
+    -- its highlights option. These remaining groups are only defaults.
+    CodeDiffMoveFrom = "Changed", CodeDiffMoveTo = "Changed", CodeDiffFiller = "NonText",
+    CodeDiffStatusAdded = "Added", CodeDiffStatusUntracked = "Added", CodeDiffStatusModified = "Changed",
+    CodeDiffStatusRenamed = "Changed", CodeDiffStatusDeleted = "Removed", CodeDiffStatusConflict = "DiagnosticError",
   }
   -- Graph and signature colors follow the rainbow-delimiter gray steps.
   for name, fg in pairs({

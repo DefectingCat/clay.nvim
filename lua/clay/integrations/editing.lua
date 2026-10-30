@@ -10,6 +10,7 @@ M.plugins = {
   { url = "https://github.com/HiPhish/rainbow-delimiters.nvim", groups = { "^RainbowDelimiter" } },
   { url = "https://github.com/petertriho/nvim-scrollbar", groups = { "^Scrollbar" } },
   { url = "https://github.com/airblade/vim-gitgutter", groups = { "^GitGutter" } },
+  { url = "https://github.com/delphinus/md-render.nvim", groups = { "^MdRender" } },
 }
 
 function M.get(c)
@@ -25,6 +26,7 @@ function M.get(c)
     LightBulbFloatWin = { fg = c.clay, bg = c.float },
     IndentLine = { fg = c.border },
     IndentLineCurrent = { fg = c.gutter },
+    MiniClueNextKeyWithPostkeys = { fg = c.clay, bold = true },
   }
   local links = {
     Dash = "Comment", DoubleDash = "Comment", Quote = "Comment",
@@ -44,6 +46,11 @@ function M.get(c)
     GitGutterDeleteLineNr = "Removed", GitGutterChangeDeleteLineNr = "Changed",
     GitGutterAddLine = "DiffAdd", GitGutterChangeLine = "DiffChange", GitGutterDeleteLine = "DiffDelete",
     GitGutterChangeDeleteLine = "DiffChange", GitGutterAddIntraLine = "DiffText", GitGutterDeleteIntraLine = "DiffText",
+    -- mini.pick/files float on NormalFloat, where CursorLine is nearly invisible.
+    MiniPickMatchCurrent = "ClaySelection", MiniPickMatchRanges = "ClayMatch", MiniPickPrompt = "ClayAccent",
+    MiniFilesCursorLine = "ClaySelection", MiniFilesTitle = "FloatFooter", MiniFilesTitleFocused = "FloatTitle",
+    MiniClueNextKey = "ClayAccent",
+    MdRenderHighlight = "Search",
   }
   -- Keep TODO categories and diagnostics neutral; reserve Clay for interaction.
   for keyword, fg in pairs({ FIX = c.bright, TODO = c.secondary, HACK = c.secondary, WARN = c.secondary, PERF = c.muted, NOTE = c.comment, TEST = c.muted }) do

@@ -43,7 +43,8 @@ local function unchanged(expected, label)
     "Lazy", "Mason", "Noice", "Notify", "Trouble", "BufferLine", "Oil", "Flash", "Navic", "Dashboard",
     "Todo", "RainbowDelimiter", "Headline", "Dash", "DoubleDash", "CodeBlock", "Quote", "Yanky",
     "Scrollbar", "LightBulb", "GitGutter", "IndentLine", "MiniJump", "MiniStarter", "MiniSurround",
-    "MiniTrailspace", "MiniCursorword", "MiniDiff", "Neogit",
+    "MiniTrailspace", "MiniCursorword", "MiniDiff", "MiniPick", "MiniFiles", "MiniClue", "Neogit",
+    "GrugFar", "CodeDiff", "MdRender",
   }
   for name in pairs(vim.api.nvim_get_hl(0, {})) do
     for _, prefix in ipairs(prefixes) do
@@ -85,7 +86,7 @@ local checks = {
   { "vim-gitgutter", function() vim.cmd.runtime("plugin/gitgutter.vim") end },
   { "indentmini.nvim", function() require("indentmini").setup({}) end },
   { "mini.nvim", function()
-    for _, module in ipairs({ "jump", "jump2d", "surround", "trailspace", "cursorword" }) do
+    for _, module in ipairs({ "jump", "jump2d", "surround", "trailspace", "cursorword", "pick", "files", "clue" }) do
       require("mini." .. module).setup({})
     end
     require("mini.starter").setup({ autoopen = false })
@@ -95,6 +96,12 @@ local checks = {
     assert(add("plenary.nvim"), "neogit requires a plenary.nvim checkout")
     require("neogit").setup({})
   end },
+  { "grug-far.nvim", function() require("grug-far.highlights").setup() end },
+  { "codediff.nvim", function()
+    require("codediff").setup({ highlights = { char_insert = "DiffText", char_delete = "DiffText" } })
+    require("codediff.ui.highlights").setup()
+  end },
+  { "md-render.nvim", function() require("md-render").setup_highlights() end },
 }
 
 local function run()

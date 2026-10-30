@@ -117,14 +117,17 @@ These plugins have highlight mappings:
 Plugin                   Repository ~
 blink.cmp                github.com/saghen/blink.cmp
 bufferline.nvim          github.com/akinsho/bufferline.nvim
+codediff.nvim            github.com/esmuellert/codediff.nvim
 dashboard-nvim           github.com/nvimdev/dashboard-nvim
 flash.nvim               github.com/folke/flash.nvim
 gitsigns.nvim            github.com/lewis6991/gitsigns.nvim
+grug-far.nvim            github.com/MagicDuck/grug-far.nvim
 headlines.nvim           github.com/lukas-reineke/headlines.nvim
 indent-blankline.nvim    github.com/lukas-reineke/indent-blankline.nvim
 indentmini.nvim          github.com/nvimdev/indentmini.nvim
 lazy.nvim                github.com/folke/lazy.nvim
 mason.nvim               github.com/mason-org/mason.nvim
+md-render.nvim           github.com/delphinus/md-render.nvim
 mini.nvim                github.com/nvim-mini/mini.nvim
 neo-tree.nvim            github.com/nvim-neo-tree/neo-tree.nvim
 neogit                   github.com/NeogitOrg/neogit
@@ -147,8 +150,8 @@ yanky.nvim               github.com/gbprod/yanky.nvim
 
 Snacks covers picker, dashboard, and indent. mini.nvim covers statusline,
 tabline, indentscope, jump, jump2d, starter, surround, trailspace, cursorword,
-and diff. Plugins can add or override groups; file icons can use separate
-third-party colors.
+diff, pick, files, and clue. Plugins can add or override groups; file icons can
+use separate third-party colors.
 
 Rainbow delimiters use neutral shades for nesting. TODO, Git, and diagnostics
 stay grayscale; active jump labels and interaction cues use Clay.
@@ -156,6 +159,14 @@ stay grayscale; active jump labels and interaction cues use Clay.
 Disable nvim-scrollbar's own highlight generation to use the theme's groups:
 >
     require('scrollbar').setup({ set_highlights = false })
+<
+codediff.nvim overwrites its line and character diff groups on every
+ColorScheme. Point its character highlights at DiffText to match other Git
+tools; line highlights already follow DiffAdd and DiffDelete:
+>
+    require('codediff').setup({
+      highlights = { char_insert = 'DiffText', char_delete = 'DiffText' },
+    })
 <
 Keep bufferline's options.themable=true (its default). Set highlight=true in
 nvim-navic's setup to enable its icon/text highlights. The theme does not alter
