@@ -32,7 +32,7 @@ transparent         true          Transparent editor and sidebar backgrounds
 italic_comments     true          Italic comments
 bold_keywords       false         Bold keywords
 terminal_colors     true          Set the built-in terminal ANSI palette
-palette             {}            Override named #RRGGBB colors
+palette             {}            Override named #RRGGBB colors (see below)
 overrides           {}            Highlight table or function(colors, options)
 
 Minimal accents only the UI. Restrained also accents function definitions.
@@ -40,38 +40,60 @@ Expressive also accents function calls. Definitions require Tree-sitter or LSP
 declaration/definition modifiers; regex syntax uses neutral Function highlights
 unless accent is 'expressive'.
 
-The grayscale hierarchy is inspired by lackluster.nvim. Variables use #cccccc,
-members and types use #aaaaaa, and keywords/calls use #8e8e8e. Strings use
-#b0978e, a gray tinted toward Clay, so they separate from keywords. Comments
-use #7a7a7a; punctuation and operators use the dimmer #686868. Keywords are not
+The theme has dark and light variants and follows 'background': run
+`:set background=light` to switch, and Neovim reloads the theme. Neovim 0.10+
+can set 'background' from the terminal's background color. The light variant
+mirrors the dark one: every text step keeps the same contrast against its
+canvas, and surfaces step darker instead of lighter. Clay stays #d97757 in both.
+
+The grayscale hierarchy is inspired by lackluster.nvim. Dark/light values:
+variables use #cccccc/#333333, members and types use #aaaaaa/#4b4b4b, and
+keywords/calls use #8e8e8e/#616161. Strings use #b0978e/#665048, a gray tinted
+toward Clay, so they separate from keywords. Comments use #7a7a7a/#737373;
+punctuation and operators use the fainter #686868/#868686. Keywords are not
 bold by default. Clay (#d97757) remains the accent for function definitions and
 UI focus in restrained mode.
 
-Git and diff text use three steps: added #e6e6e6, changed #aaaaaa, removed
-#8e8e8e. Diagnostics use error #e6e6e6, warn #aaaaaa, info #8e8e8e, and hint
-#7a7a7a. DiffAdd, DiffChange, DiffDelete, CursorLine, Search, Visual, and LSP
-reference backgrounds each use their own surface.
+Git and diff text use three steps: added (bright), changed (secondary), removed
+(muted). Diagnostics use error (bright), warn (secondary), info (muted), and
+hint (comment). DiffAdd, DiffChange, DiffDelete, CursorLine, Search, Visual,
+and LSP reference backgrounds each use their own surface.
 
 Transparency is enabled by default. Set transparent=false for a solid #121212
-editor background and solid sidebar backgrounds. The actual opacity is
-controlled by your terminal or GUI. CursorLine keeps a fixed #1e1e1e; if your
-terminal background is close to it, override palette.cursorline.
+(dark) or #f6f6f6 (light) editor background and solid sidebar backgrounds. The
+actual opacity is controlled by your terminal or GUI. CursorLine keeps a fixed
+#1e1e1e/#e5e5e5; if your terminal background is close to it, override
+palette.cursorline.
 Transparent mode retains opaque popups, status bars, and selections.
 Float and popup borders share the float background, so 'winborder' and
 'pumborder' (Neovim 0.12) set to "solid" read as padding without extra setup.
 Transparent window backgrounds set blend=0, so floats that reuse them with
 'winblend' (such as noice's mini view) do not show the text beneath. The theme
-sets 'background' to dark and enables 'termguicolors'. It does not change layout,
-diagnostic settings, 'guicursor', or install/configure other plugins.
+enables 'termguicolors' and reads, but does not set, 'background'. It does not
+change layout, diagnostic settings, 'guicursor', or install/configure other
+plugins.
 
 Terminal colors are grayscale except red/bright red, which use Clay, so errors
-and diff removals stand apart from default text.
+and diff removals stand apart from default text. Black stays darker than white
+in both variants.
 terminal_colors=false leaves the existing palette untouched (does not restore a
 previous palette).
 
 Palette keys: bg, sidebar, float, cursorline, selection, search, reference,
-statusline, border, float_border, fg, bright, secondary, string, muted, subtle,
-comment, gutter, clay, diff_add, diff_change, diff_delete.
+statusline, border, float_border, shadow, fg, bright, secondary, string, muted,
+subtle, comment, gutter, clay, diff_add, diff_change, diff_delete. Key names
+describe roles: bright is the strongest emphasis, the darkest text in light.
+
+Top-level palette colors apply to both variants; dark and light tables apply
+to one variant and take precedence:
+>
+    require('clay').setup({
+      palette = { clay = '#c87860', light = { bg = '#ffffff' } },
+    })
+<
+The design specification, including both palettes, semantic mappings, and
+terminal tables for porting Clay to other applications, is in
+design/clay-design-system.md.
 
 Override entries replace complete highlights, including links. An empty table
 clears a highlight. The callback must return a highlight table.
@@ -83,6 +105,8 @@ clears a highlight. The callback must return a highlight table.
     })
 <
 get_palette() and get_options() return copies of the active configuration.
+get_palette() returns the variant selected by 'background'; pass 'dark' or
+'light' to get a specific one.
 LuaLS annotations describe setup() as clay.Options; add the plugin to your
 workspace library (lazydev.nvim does this) to complete option names.
 
@@ -147,8 +171,9 @@ PREVIEW                                                       *clay-preview*
 
 From the repository directory run `make preview`. This uses an isolated demo
 configuration and works over SSH. Exit with :q!. Set CLAY_ACCENT=minimal or
-CLAY_ACCENT=expressive to compare alternatives. Run `make test` for checks;
-the tests require a Lua Tree-sitter parser.
+CLAY_ACCENT=expressive to compare alternatives, and CLAY_BACKGROUND=light or
+dark to choose a variant. Run `make test` for checks; the tests require a Lua
+Tree-sitter parser.
 
 Run `make preview-parsers` once for multilingual previews (Neovim 0.12+, current
 nvim-treesitter, tree-sitter CLI 0.26.1+, cc, curl, tar required). Parsers and

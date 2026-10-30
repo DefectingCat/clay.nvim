@@ -23,6 +23,30 @@ local function load(opts)
   vim.cmd.colorscheme("clay")
 end
 
+local function luminance(value)
+  local total = 0
+  for index, weight in ipairs({ 0.2126, 0.7152, 0.0722 }) do
+    local channel = math.floor(value / 256 ^ (3 - index)) % 256 / 255
+    channel = channel <= 0.03928 and channel / 12.92 or ((channel + 0.055) / 1.055) ^ 2.4
+    total = total + weight * channel
+  end
+  return total
+end
+
+local function contrast(a, b)
+  local x, y = luminance(a), luminance(b)
+  return (math.max(x, y) + 0.05) / (math.min(x, y) + 0.05)
+end
+
+-- Changing 'background' makes Neovim reload the active colorscheme.
+local function each_variant(fn)
+  for _, variant in ipairs({ "dark", "light" }) do
+    vim.o.background = variant
+    fn(variant, theme.get_palette(variant))
+  end
+  vim.o.background = "dark"
+end
+
 local function test(name, fn)
   fn()
   count = count + 1
@@ -78,73 +102,113 @@ local function run()
   end)
 
   test("grayscale hierarchy keeps identifiers above structural syntax and retains Clay focus", function()
-    local function fg(name)
-      return hl(name).fg
-    end
-    assert(fg("@variable") > fg("@variable.member"))
-    assert(fg("@variable.member") > fg("@variable.parameter"))
-    assert(fg("@variable") > fg("@keyword"))
-    assert(fg("@variable") > fg("@function.call"))
-    assert(fg("@keyword") > fg("@punctuation.bracket"))
-    assert(fg("@variable") > fg("@string"))
-    equal(fg("@type"), fg("@variable.member"))
-    equal(fg("@type.definition"), fg("@variable"))
-    equal(fg("@lsp.type.parameter"), fg("@variable.parameter"))
-    equal(fg("@lsp.type.property"), fg("@variable.member"))
-    assert(not hl("@keyword").bold)
-    equal(fg("@function"), color(colors.clay))
-    equal(fg("CursorLineNr"), color(colors.clay))
-    equal(hl("ClayMode").bg, color(colors.clay))
-    equal(hl("StatusLine").bg, color(colors.statusline))
+    each_variant(function(variant, c)
+      local function fg(name)
+        return hl(name).fg
+      end
+      local function above(a, b)
+        assert(contrast(fg(a), color(c.bg)) > contrast(fg(b), color(c.bg)), variant .. ": " .. a .. " should stand out more than " .. b)
+      end
+      above("@variable", "@variable.member")
+      above("@variable.member", "@variable.parameter")
+      above("@variable", "@keyword")
+      above("@variable", "@function.call")
+      above("@keyword", "@punctuation.bracket")
+      above("@variable", "@string")
+      equal(fg("@type"), fg("@variable.member"))
+      equal(fg("@type.definition"), fg("@variable"))
+      equal(fg("@lsp.type.parameter"), fg("@variable.parameter"))
+      equal(fg("@lsp.type.property"), fg("@variable.member"))
+      assert(not hl("@keyword").bold)
+      equal(fg("@function"), color(c.clay))
+      equal(fg("CursorLineNr"), color(c.clay))
+      equal(hl("ClayMode").bg, color(c.clay))
+      equal(hl("StatusLine").bg, color(c.statusline))
+    end)
   end)
 
   test("related syntax, diff, diagnostic, and surface states stay distinguishable", function()
-    local function differ(a, b, key)
-      key = key or "fg"
-      local x, y = hl(a)[key], hl(b)[key]
-      assert(x and y and x ~= y, a .. " and " .. b .. " share " .. key .. " " .. vim.inspect(x))
-    end
-    differ("@string", "@keyword")
-    differ("@string", "@type")
-    differ("@comment", "@punctuation.bracket")
-    differ("@comment", "@operator")
-    differ("Added", "Changed")
-    differ("Changed", "Removed")
-    differ("Added", "Removed")
-    differ("DiagnosticWarn", "DiagnosticInfo")
-    differ("DiagnosticInfo", "DiagnosticHint")
-    for _, pair in ipairs({
-      { "DiffAdd", "DiffChange" }, { "DiffChange", "DiffDelete" }, { "DiffAdd", "DiffDelete" },
-      { "DiffChange", "CursorLine" }, { "DiffAdd", "CursorLine" }, { "DiffDelete", "CursorLine" },
-      { "Search", "Visual" }, { "LspReferenceText", "CursorLine" }, { "CursorLine", "NormalFloat" },
-    }) do
-      differ(pair[1], pair[2], "bg")
-    end
+    each_variant(function(variant, c)
+      local function differ(a, b, key)
+        key = key or "fg"
+        local x, y = hl(a)[key], hl(b)[key]
+        assert(x and y and x ~= y, variant .. ": " .. a .. " and " .. b .. " share " .. key .. " " .. vim.inspect(x))
+      end
+      differ("@string", "@keyword")
+      differ("@string", "@type")
+      differ("@comment", "@punctuation.bracket")
+      differ("@comment", "@operator")
+      differ("Added", "Changed")
+      differ("Changed", "Removed")
+      differ("Added", "Removed")
+      differ("DiagnosticWarn", "DiagnosticInfo")
+      differ("DiagnosticInfo", "DiagnosticHint")
+      for _, pair in ipairs({
+        { "DiffAdd", "DiffChange" }, { "DiffChange", "DiffDelete" }, { "DiffAdd", "DiffDelete" },
+        { "DiffChange", "CursorLine" }, { "DiffAdd", "CursorLine" }, { "DiffDelete", "CursorLine" },
+        { "Search", "Visual" }, { "LspReferenceText", "CursorLine" }, { "CursorLine", "NormalFloat" },
+      }) do
+        differ(pair[1], pair[2], "bg")
+      end
+      -- Backdrops and popup shadows must darken whatever lies beneath.
+      assert(luminance(hl("FloatShadow").bg) < luminance(color(c.bg)), variant .. ": FloatShadow does not darken")
+    end)
+  end)
+
+  test("'background' selects the variant and changing it reloads the theme", function()
+    load({ transparent = false })
+    local dark, light = theme.get_palette("dark"), theme.get_palette("light")
+    equal(hl("Normal").bg, color(dark.bg))
+    vim.o.background = "light"
+    equal(vim.g.colors_name, "clay")
+    equal(theme.get_palette(), light)
+    equal(hl("Normal").bg, color(light.bg))
+    equal(hl("Normal").fg, color(light.fg))
+    assert(luminance(color(light.bg)) > luminance(color(light.fg)), "light variant must use dark text on a light canvas")
+    vim.o.background = "dark"
+    equal(hl("Normal").bg, color(dark.bg))
+    load()
+  end)
+
+  test("top-level palette colors apply to both variants and variant tables take precedence", function()
+    load({ palette = { clay = "#c87860", dark = { fg = "#d0d0d0" }, light = { clay = "#a05030" } } })
+    local defaults = require("clay.palette")
+    equal(theme.get_palette("dark").clay, "#c87860")
+    equal(theme.get_palette("dark").fg, "#d0d0d0")
+    equal(theme.get_palette("light").clay, "#a05030")
+    equal(theme.get_palette("light").fg, defaults.light.fg)
+    equal(hl("@function").fg, color("#c87860"))
+    vim.o.background = "light"
+    equal(hl("@function").fg, color("#a05030"))
+    vim.o.background = "dark"
+    load()
   end)
 
   test("colors stay grayscale apart from Clay and the string tint, and every link resolves", function()
-    local groups = vim.tbl_extend("force", require("clay.highlights").get(colors, theme.get_options()), require("clay.integrations").get(colors, theme.get_options()))
-    for name, spec in pairs(groups) do
-      if spec.link then
-        assert(groups[spec.link], name .. " has an undefined link: " .. spec.link)
-        local seen, current = {}, name
-        while groups[current].link do
-          assert(not seen[current], "highlight link cycle: " .. name)
-          seen[current] = true
-          current = groups[current].link
+    each_variant(function(variant, c)
+      local groups = vim.tbl_extend("force", require("clay.highlights").get(c, theme.get_options()), require("clay.integrations").get(c, theme.get_options()))
+      for name, spec in pairs(groups) do
+        if spec.link then
+          assert(groups[spec.link], name .. " has an undefined link: " .. spec.link)
+          local seen, current = {}, name
+          while groups[current].link do
+            assert(not seen[current], "highlight link cycle: " .. name)
+            seen[current] = true
+            current = groups[current].link
+          end
+        end
+        for _, key in ipairs({ "fg", "bg", "sp" }) do
+          local value = hl(name)[key]
+          if value and value ~= color(c.clay) and value ~= color(c.string) then
+            local r, g, b = math.floor(value / 65536), math.floor(value / 256) % 256, value % 256
+            assert(r == g and g == b, variant .. ": " .. name .. " contains a chromatic " .. key)
+          end
         end
       end
-      for _, key in ipairs({ "fg", "bg", "sp" }) do
-        local value = hl(name)[key]
-        if value and value ~= color(colors.clay) and value ~= color(colors.string) then
-          local r, g, b = math.floor(value / 65536), math.floor(value / 256) % 256, value % 256
-          assert(r == g and g == b, name .. " contains a chromatic " .. key)
-        end
+      for _, name in ipairs({ "CmpItemAbbr", "BlinkCmpLabel", "SnacksPickerFile", "NeoTreeFileName", "OilFile", "NavicText", "NavicIconsFunction", "TroubleText" }) do
+        equal(hl(name).bg, nil, name .. " must not paint over a selected row")
       end
-    end
-    for _, name in ipairs({ "CmpItemAbbr", "BlinkCmpLabel", "SnacksPickerFile", "NeoTreeFileName", "OilFile", "NavicText", "NavicIconsFunction", "TroubleText" }) do
-      equal(hl(name).bg, nil, name .. " must not paint over a selected row")
-    end
+    end)
   end)
 
   test("background defaults to transparent and can switch to opaque and back", function()
@@ -237,6 +301,8 @@ local function run()
     local invalid = {
       "dark", { accent = "rainbow" }, { transparent = "yes" }, { typo = true },
       { palette = false }, { palette = { absent = "#ffffff" } }, { palette = { clay = "orange" } },
+      { palette = { light = "#ffffff" } }, { palette = { light = { absent = "#ffffff" } } },
+      { palette = { dark = { clay = "orange" } } },
       { overrides = 1 },
     }
     for _, opts in ipairs(invalid) do
@@ -259,9 +325,12 @@ local function run()
       names[#names + 1] = name
     end
     table.sort(names)
-    local keys = vim.tbl_keys(require("clay.palette"))
-    table.sort(keys)
-    equal(names, keys, "clay.PaletteName differs from lua/clay/palette.lua")
+    local palettes = require("clay.palette")
+    for _, variant in ipairs({ "dark", "light" }) do
+      local keys = vim.tbl_keys(palettes[variant])
+      table.sort(keys)
+      equal(names, keys, "clay.PaletteName differs from the " .. variant .. " palette")
+    end
   end)
 
   test("integration metadata owns every plugin group and the help table is current", function()
@@ -300,26 +369,54 @@ local function run()
     equal(docs.update(help), help, "doc/clay.txt integration table is stale; run make docs")
   end)
 
-  test("design system palette and terminal tables match the theme", function()
+  test("design system spec and preview colors match the theme", function()
     local spec = vim.fn.readfile(root .. "/design/clay-design-system.md")
-    local documented, terminal = {}, {}
+    local documented, terminal = { dark = {}, light = {} }, { dark = {}, light = {} }
     for _, line in ipairs(spec) do
       -- Tolerate column padding added by Markdown table formatters.
-      local key, value = line:match("^|%s*`([%w_]+)`%s*|%s*`(#%x+)`%s*|")
+      local key, dark, light = line:match("^|%s*`([%w_]+)`%s*|%s*`(#%x+)`%s*|%s*`(#%x+)`%s*|")
       if key then
-        documented[key] = value
+        documented.dark[key], documented.light[key] = dark, light
       end
-      local index, name, ansi = line:match("^|%s*(%d+)%s*|[^|]+|%s*`([%w_]+)`%s*|%s*`(#%x+)`%s*|")
+      local index, dark_key, dark_value, light_key, light_value =
+        line:match("^|%s*(%d+)%s*|[^|]+|%s*`([%w_]+)`%s*|%s*`(#%x+)`%s*|%s*`([%w_]+)`%s*|%s*`(#%x+)`%s*|")
       if index then
-        equal(ansi, colors[name], "terminal table row " .. index .. " has a stale value")
-        terminal[tonumber(index)] = colors[name]
+        terminal.dark[tonumber(index)] = { dark_key, dark_value }
+        terminal.light[tonumber(index)] = { light_key, light_value }
       end
     end
-    equal(documented, require("clay.palette"), "design/clay-design-system.md palette tables are stale")
-    load()
-    for index = 0, 15 do
-      equal(vim.g["terminal_color_" .. index], terminal[index], "terminal table row " .. index)
+    -- The light rule only overrides variables, so it inherits Clay from the dark rule.
+    local preview = { dark = {}, light = {} }
+    for _, line in ipairs(vim.fn.readfile(root .. "/design/clay-grayscale.html")) do
+      local variant = line:match("^%s*#clay%-grayscale%-preview {") and "dark"
+        or line:match('^%s*#clay%-grayscale%-preview%[data%-variant="light"%] {') and "light"
+      if variant then
+        for name, value in line:gmatch("%-%-cn%-([%w%-]+): (#%x+);") do
+          preview[variant][name] = value
+        end
+      end
     end
+    preview.light = vim.tbl_extend("keep", preview.light, preview.dark)
+    local preview_keys = {
+      bg = "bg", side = "sidebar", float = "float", panel = "statusline", line = "cursorline",
+      select = "selection", border = "border", ["float-border"] = "float_border",
+      ["diff-add"] = "diff_add", ["diff-delete"] = "diff_delete", fg = "fg", bright = "bright",
+      secondary = "secondary", string = "string", muted = "muted", comment = "comment",
+      subtle = "subtle", gutter = "gutter", clay = "clay",
+    }
+    local palettes = require("clay.palette")
+    load()
+    each_variant(function(variant, c)
+      equal(documented[variant], palettes[variant], "design/clay-design-system.md " .. variant .. " palette is stale")
+      for name, key in pairs(preview_keys) do
+        equal(preview[variant][name], palettes[variant][key], "design/clay-grayscale.html " .. variant .. " --cn-" .. name)
+      end
+      for index = 0, 15 do
+        local row = assert(terminal[variant][index], "terminal table row " .. index .. " missing")
+        equal(row[2], c[row[1]], variant .. " terminal row " .. index .. " value differs from its key")
+        equal(vim.g["terminal_color_" .. index], row[2], variant .. " terminal row " .. index)
+      end
+    end)
   end)
 
   test("terminal colors are optional and all 16 entries are populated when enabled", function()
@@ -327,25 +424,31 @@ local function run()
     load({ terminal_colors = false })
     equal(vim.g.terminal_color_3, "#123456")
     load()
-    for index = 0, 15 do
-      assert(vim.g["terminal_color_" .. index]:match("^#%x%x%x%x%x%x$"))
-    end
-    equal(vim.g.terminal_color_1, colors.clay)
-    for _, index in ipairs({ 1, 2, 9, 10 }) do
-      assert(vim.g["terminal_color_" .. index] ~= vim.g.terminal_color_7, "terminal color " .. index .. " matches default text")
-    end
+    each_variant(function(variant, c)
+      for index = 0, 15 do
+        assert(vim.g["terminal_color_" .. index]:match("^#%x%x%x%x%x%x$"))
+      end
+      equal(vim.g.terminal_color_1, c.clay)
+      for _, index in ipairs({ 1, 2, 9, 10 }) do
+        assert(vim.g["terminal_color_" .. index] ~= c.fg, variant .. ": terminal color " .. index .. " matches default text")
+      end
+      -- ANSI names are absolute: black stays darker than white on either canvas.
+      assert(luminance(color(vim.g.terminal_color_0)) < luminance(color(vim.g.terminal_color_7)), variant .. ": black is lighter than white")
+    end)
   end)
 
   test("lualine mode colors remain Clay and nested tables are independent", function()
-    package.loaded["lualine.themes.clay"] = nil
-    local status = require("lualine.themes.clay")
-    for _, mode in ipairs({ "normal", "insert", "visual", "replace", "command", "terminal" }) do
-      equal(status[mode].a.bg, colors.clay)
-      equal(status[mode].b.bg, colors.statusline)
-      equal(status[mode].c.bg, colors.statusline)
-    end
-    status.normal.a.bg = "#ffffff"
-    equal(status.insert.a.bg, colors.clay)
+    each_variant(function(_, c)
+      package.loaded["lualine.themes.clay"] = nil
+      local status = require("lualine.themes.clay")
+      for _, mode in ipairs({ "normal", "insert", "visual", "replace", "command", "terminal" }) do
+        equal(status[mode].a.bg, c.clay)
+        equal(status[mode].b.bg, c.statusline)
+        equal(status[mode].c.bg, c.statusline)
+      end
+      status.normal.a.bg = "#ffffff"
+      equal(status.insert.a.bg, c.clay)
+    end)
   end)
 
   test("colorscheme reload and switching back from another theme", function()

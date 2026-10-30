@@ -3,6 +3,10 @@ local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h")
 local preview = dofile(root .. "/scripts/preview-runtime.lua")
 preview.configure(root)
 require("clay").setup({ accent = vim.env.CLAY_ACCENT or "restrained" })
+-- Unset leaves Neovim's terminal background detection in charge.
+if vim.env.CLAY_BACKGROUND then
+  vim.o.background = vim.env.CLAY_BACKGROUND
+end
 vim.cmd.colorscheme("clay")
 vim.opt.number = true
 vim.opt.cursorline = true

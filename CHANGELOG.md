@@ -7,6 +7,14 @@
 ### 新增
 
 - 新增设计规范 `design/clay-design-system.md`：色板角色、语法与界面映射、Diff/诊断层级、终端 16 色和移植到其他软件的规则；测试确保其色值与主题一致。
+- 新增亮色变体。主题跟随 `background`：`:set background=light` 切换到亮色，Neovim 自动重新加载主题，lualine 主题随之更新。亮色变体按对比度镜像暗色：每档文字与底色的对比度相同，表面向深处叠加；Clay 保持品牌色 `#D97757`。
+- `palette` 支持 `dark`、`light` 子表，只覆盖对应变体；顶层颜色仍作用于两个变体。`get_palette()` 可传入 `"dark"` 或 `"light"` 读取指定变体。
+- 新增色板键 `shadow`，用于浮窗阴影和背景遮罩。
+- 预览支持 `CLAY_BACKGROUND=light`；`design/clay-grayscale.html` 可切换暗色与亮色。
+
+### 不兼容变化
+
+- 主题不再把 `background` 强制设为 `dark`。`background=light` 时（包括 Neovim 根据终端底色自动检测的情况）会加载亮色变体；需要始终使用暗色请在加载主题前设置 `vim.o.background = "dark"`。
 
 ### 变更
 

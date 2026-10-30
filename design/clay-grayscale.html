@@ -1,6 +1,7 @@
 <div id="clay-grayscale-preview">
   <style>
-    #clay-grayscale-preview { --cn-bg: #121212; --cn-side: #101010; --cn-float: #1a1a1a; --cn-panel: #242424; --cn-line: #1e1e1e; --cn-select: #363636; --cn-border: #2a2a2a; --cn-float-border: #444444; --cn-diff-add: #2d2d2d; --cn-diff-delete: #181818; --cn-fg: #cccccc; --cn-bright: #e6e6e6; --cn-secondary: #aaaaaa; --cn-string: #b0978e; --cn-muted: #8e8e8e; --cn-comment: #7a7a7a; --cn-subtle: #686868; --cn-gutter: #555555; --cn-clay: #d97757; --cn-def: #d97757; --cn-call: #8e8e8e; width: 100%; }
+    #clay-grayscale-preview { --cn-bg: #121212; --cn-side: #101010; --cn-float: #1a1a1a; --cn-panel: #242424; --cn-line: #1e1e1e; --cn-select: #363636; --cn-border: #2a2a2a; --cn-float-border: #444444; --cn-diff-add: #2d2d2d; --cn-diff-delete: #181818; --cn-fg: #cccccc; --cn-bright: #e6e6e6; --cn-secondary: #aaaaaa; --cn-string: #b0978e; --cn-muted: #8e8e8e; --cn-comment: #7a7a7a; --cn-subtle: #686868; --cn-gutter: #555555; --cn-clay: #d97757; --cn-def: var(--cn-clay); --cn-call: var(--cn-muted); width: 100%; }
+    #clay-grayscale-preview[data-variant="light"] { --cn-bg: #f6f6f6; --cn-side: #f8f8f8; --cn-float: #ebebeb; --cn-panel: #dddddd; --cn-line: #e5e5e5; --cn-select: #c6c6c6; --cn-border: #d5d5d5; --cn-float-border: #b5b5b5; --cn-diff-add: #d1d1d1; --cn-diff-delete: #eeeeee; --cn-fg: #333333; --cn-bright: #202020; --cn-secondary: #4b4b4b; --cn-string: #665048; --cn-muted: #616161; --cn-comment: #737373; --cn-subtle: #868686; --cn-gutter: #9d9d9d; }
     #clay-grayscale-preview * { box-sizing: border-box; }
     #clay-grayscale-preview .cn-app { color: var(--cn-fg); background: var(--cn-bg); font: 13px/1.85 "JetBrains Mono", "Cascadia Code", "DejaVu Sans Mono", monospace; border: 1px solid var(--cn-border); border-radius: 8px; overflow: clip; }
     #clay-grayscale-preview button { font: inherit; }
@@ -91,7 +92,7 @@
       #clay-grayscale-preview .cn-search input { font-size: 16px; }
     }
   </style>
-  <div class="cn-app" aria-label="Clay grayscale 深色 Neovim 主题设计预览">
+  <div class="cn-app" aria-label="Clay grayscale Neovim 主题设计预览">
     <div class="cn-titlebar"><span class="cn-title">clay.nvim</span><span class="cn-subtitle">grayscale / clay · 设计预览</span></div>
     <div class="cn-workspace">
       <aside class="cn-tree" aria-label="示例文件">
@@ -128,18 +129,18 @@
     <div class="cn-command"><button class="cursor-interaction" type="button" data-open-search>:Telescope find_files</button><span class="cn-scene-label">克制点缀</span></div>
   </div>
   <div class="cn-palette" aria-label="主题核心色板">
-    <span class="cn-swatch"><span class="cn-chip" style="background:#121212"></span>Canvas #121212</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#363636"></span>Selection #363636</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#7a7a7a"></span>Comment #7A7A7A</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#b0978e"></span>String #B0978E</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#cccccc"></span>Text #CCCCCC</span>
-    <span class="cn-swatch"><span class="cn-chip" style="background:#d97757"></span>Clay #D97757</span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:var(--cn-bg)"></span>Canvas <span data-swatch="--cn-bg"></span></span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:var(--cn-select)"></span>Selection <span data-swatch="--cn-select"></span></span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:var(--cn-comment)"></span>Comment <span data-swatch="--cn-comment"></span></span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:var(--cn-string)"></span>String <span data-swatch="--cn-string"></span></span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:var(--cn-fg)"></span>Text <span data-swatch="--cn-fg"></span></span>
+    <span class="cn-swatch"><span class="cn-chip" style="background:var(--cn-clay)"></span>Clay <span data-swatch="--cn-clay"></span></span>
   </div>
   <script>
     (() => {
       const root = document.getElementById('clay-grayscale-preview');
       const app = root.querySelector('.cn-app');
-      const state = { intensity: 'restrained', scene: 'editing', italics: true, buffer: 'lua' };
+      const state = { variant: 'dark', intensity: 'restrained', scene: 'editing', italics: true, buffer: 'lua' };
       const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
       const token = (type, text) => '<span class="cn-' + type + '">' + escape(text) + '</span>';
       const k = text => token('keyword', text);
@@ -234,7 +235,7 @@
       const input = search.querySelector('input');
       const results = root.querySelector('.cn-results');
       function save() {
-        if (window.openai?.setWidgetState) window.openai.setWidgetState({ modelContent: { intensity: state.intensity, italics: state.italics }, privateContent: { buffer: state.buffer, scene: state.scene } }).catch(() => {});
+        if (window.openai?.setWidgetState) window.openai.setWidgetState({ modelContent: { variant: state.variant, intensity: state.intensity, italics: state.italics }, privateContent: { buffer: state.buffer, scene: state.scene } }).catch(() => {});
       }
       function renderResults() {
         const query = input.value.trim().toLowerCase();
@@ -246,8 +247,11 @@
         }).join('') : '<div class="cn-empty">No matching files</div>';
       }
       function render() {
-        root.style.setProperty('--cn-def', state.intensity === 'ui' ? '#e6e6e6' : '#d97757');
-        root.style.setProperty('--cn-call', state.intensity === 'expressive' ? '#d97757' : '#8e8e8e');
+        root.dataset.variant = state.variant;
+        root.style.setProperty('--cn-def', state.intensity === 'ui' ? 'var(--cn-bright)' : 'var(--cn-clay)');
+        root.style.setProperty('--cn-call', state.intensity === 'expressive' ? 'var(--cn-clay)' : 'var(--cn-muted)');
+        const computed = getComputedStyle(root);
+        root.querySelectorAll('[data-swatch]').forEach(label => label.textContent = computed.getPropertyValue(label.dataset.swatch).trim().toUpperCase());
         const buffer = buffers[state.buffer];
         root.querySelectorAll('[data-buffer]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.buffer === state.buffer)));
         root.querySelector('.cn-breadcrumb').textContent = buffer.file.replaceAll('/', ' / ');
@@ -272,6 +276,7 @@
       function restore(snapshot) {
         const m = snapshot?.modelContent || {};
         const u = snapshot?.privateContent || {};
+        if (['dark', 'light'].includes(m.variant)) state.variant = m.variant;
         if (Object.hasOwn(names, m.intensity)) state.intensity = m.intensity;
         if (typeof m.italics === 'boolean') state.italics = m.italics;
         if (Object.hasOwn(buffers, u.buffer)) state.buffer = u.buffer;
@@ -300,6 +305,7 @@
       render();
       if (globalThis.Tweak) {
         const tweak = new Tweak({ container: app, onChange: () => { render(); save(); } });
+        tweak.addSelect(state, 'variant', { label: '变体', options: [{ label: '暗色', value: 'dark' }, { label: '亮色', value: 'light' }] });
         tweak.addSelect(state, 'intensity', { label: 'Clay 点缀范围', options: [{ label: '克制 · 仅函数定义', value: 'restrained' }, { label: '极简 · 仅界面', value: 'ui' }, { label: '明显 · 函数定义与调用', value: 'expressive' }] });
         tweak.addSelect(state, 'scene', { label: '预览场景', options: [{ label: '日常编辑', value: 'editing' }, { label: '自动补全', value: 'completion' }, { label: '文件查找', value: 'search' }] });
         tweak.addToggle(state, 'italics', { label: '注释斜体' });

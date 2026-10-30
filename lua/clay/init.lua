@@ -1,6 +1,9 @@
 ---@alias clay.Accent "minimal"|"restrained"|"expressive"
----@alias clay.PaletteName "bg"|"sidebar"|"float"|"cursorline"|"selection"|"search"|"reference"|"statusline"|"border"|"float_border"|"fg"|"bright"|"secondary"|"string"|"muted"|"subtle"|"comment"|"gutter"|"clay"|"diff_add"|"diff_change"|"diff_delete"
+---@alias clay.Variant "dark"|"light"
+---@alias clay.PaletteName "bg"|"sidebar"|"float"|"cursorline"|"selection"|"search"|"reference"|"statusline"|"border"|"float_border"|"shadow"|"fg"|"bright"|"secondary"|"string"|"muted"|"subtle"|"comment"|"gutter"|"clay"|"diff_add"|"diff_change"|"diff_delete"
 ---@alias clay.Palette table<clay.PaletteName, string>
+---Top-level colors apply to both variants; `dark` and `light` tables override one.
+---@alias clay.PaletteOptions table<clay.PaletteName|clay.Variant, string|clay.Palette>
 ---@alias clay.Highlights table<string, vim.api.keyset.highlight>
 ---@alias clay.Overrides clay.Highlights|fun(colors: clay.Palette, options: clay.Config): clay.Highlights
 
@@ -11,7 +14,7 @@
 ---@field italic_comments? boolean
 ---@field bold_keywords? boolean
 ---@field terminal_colors? boolean Set the built-in terminal ANSI palette
----@field palette? table<clay.PaletteName, string> #RRGGBB replacements for named colors
+---@field palette? clay.PaletteOptions #RRGGBB replacements for named colors
 ---@field overrides? clay.Overrides Highlights that replace theme definitions
 
 ---Resolved configuration returned by get_options().
@@ -21,7 +24,7 @@
 ---@field italic_comments boolean
 ---@field bold_keywords boolean
 ---@field terminal_colors boolean
----@field palette table<clay.PaletteName, string>
+---@field palette clay.PaletteOptions
 ---@field overrides clay.Overrides
 
 local M = {}
@@ -41,6 +44,34 @@ local options = vim.deepcopy(defaults)
 
 local function fail(message)
   error("clay.nvim: " .. message, 3)
+end
+
+local variants = { "dark", "light" }
+
+-- ANSI 0-15 by palette key. Names are absolute colors, so light terminals keep
+-- black dark and white light. Red carries errors and diff removals, so it must
+-- not match default text.
+local terminal_keys = {
+  dark = {
+    "sidebar", "clay", "bright", "secondary", "secondary", "muted", "secondary", "fg",
+    "comment", "clay", "bright", "fg", "fg", "secondary", "fg", "bright",
+  },
+  light = {
+    "fg", "clay", "bright", "secondary", "secondary", "muted", "secondary", "subtle",
+    "comment", "clay", "bright", "fg", "fg", "secondary", "fg", "gutter",
+  },
+}
+
+local function validate_colors(colors, prefix)
+  local palette = require("clay.palette").dark
+  for key, value in pairs(colors) do
+    if palette[key] == nil then
+      fail("unknown palette color: " .. prefix .. tostring(key))
+    end
+    if type(value) ~= "string" or not value:match("^#%x%x%x%x%x%x$") then
+      fail("palette." .. prefix .. key .. " must be a #RRGGBB color")
+    end
+  end
 end
 
 ---Configure the theme. Apply it separately with :colorscheme clay.
@@ -67,13 +98,14 @@ function M.setup(opts)
   if type(next_options.palette) ~= "table" then
     fail("palette must be a table")
   end
-  local palette = require("clay.palette")
   for key, value in pairs(next_options.palette) do
-    if palette[key] == nil then
-      fail("unknown palette color: " .. tostring(key))
-    end
-    if type(value) ~= "string" or not value:match("^#%x%x%x%x%x%x$") then
-      fail("palette." .. key .. " must be a #RRGGBB color")
+    if vim.tbl_contains(variants, key) then
+      if type(value) ~= "table" then
+        fail("palette." .. key .. " must be a table")
+      end
+      validate_colors(value, key .. ".")
+    else
+      validate_colors({ [key] = value }, "")
     end
   end
   if type(next_options.overrides) ~= "table" and type(next_options.overrides) ~= "function" then
@@ -88,13 +120,28 @@ function M.get_options()
   return vim.deepcopy(options)
 end
 
+---Colors for a variant, defaulting to the one selected by 'background'.
+---@param variant? clay.Variant
 ---@return clay.Palette
-function M.get_palette()
-  return vim.tbl_extend("force", vim.deepcopy(require("clay.palette")), options.palette)
+function M.get_palette(variant)
+  variant = variant or (vim.o.background == "light" and "light" or "dark")
+  if not vim.tbl_contains(variants, variant) then
+    fail("variant must be dark or light")
+  end
+  local colors = vim.deepcopy(require("clay.palette")[variant])
+  for key, value in pairs(options.palette) do
+    if type(value) == "string" then
+      colors[key] = value
+    end
+  end
+  return vim.tbl_extend("force", colors, options.palette[variant] or {})
 end
 
+---Apply the variant matching 'background'. Neovim reloads the colorscheme
+---when 'background' changes, so `:set background=light` switches variants.
 function M.load()
-  local colors = M.get_palette()
+  local variant = vim.o.background == "light" and "light" or "dark"
+  local colors = M.get_palette(variant)
   local opts = M.get_options()
   local groups = require("clay.highlights").get(colors, opts)
   groups = vim.tbl_extend("force", groups, require("clay.integrations").get(colors, opts))
@@ -114,7 +161,6 @@ function M.load()
   end
 
   vim.o.termguicolors = true
-  vim.o.background = "dark"
   -- Nothing to clear before the first colorscheme; skipping it keeps groups
   -- that plugins defined during startup.
   if vim.g.colors_name then
@@ -129,15 +175,8 @@ function M.load()
   end
 
   if opts.terminal_colors then
-    -- Red carries errors and diff removals, so it must not match default text.
-    local terminal = {
-      colors.sidebar, colors.clay, colors.bright, colors.secondary,
-      colors.secondary, colors.muted, colors.secondary, colors.fg,
-      colors.comment, colors.clay, colors.bright, colors.fg,
-      colors.fg, colors.secondary, colors.fg, colors.bright,
-    }
-    for index, color in ipairs(terminal) do
-      vim.g["terminal_color_" .. (index - 1)] = color
+    for index, key in ipairs(terminal_keys[variant]) do
+      vim.g["terminal_color_" .. (index - 1)] = colors[key]
     end
   end
 end

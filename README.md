@@ -1,10 +1,10 @@
 # clay.nvim
 
-灰阶为底，陶土色点睛的 Neovim 深色主题。
+灰阶为底，陶土色点睛的 Neovim 主题，提供暗色与亮色两个变体。
 
 ![clay.nvim](examples/rust.png)
 
-默认透明背景，以 `#D97757` Clay 突出函数定义与操作焦点；字符串使用偏 Clay 的暖灰，其余语法、诊断、Diff 和 Git 状态以灰阶区分。关闭透明后，背景为 `#121212`。
+默认透明背景，以 `#D97757` Clay 突出函数定义与操作焦点；字符串使用偏 Clay 的暖灰，其余语法、诊断、Diff 和 Git 状态以灰阶区分。主题跟随 `background`：`:set background=light` 切换到亮色变体。关闭透明后，暗色背景为 `#121212`，亮色为 `#F6F6F6`。
 
 需要 **Neovim 0.10.4+** 和支持真彩色的终端。
 
@@ -46,13 +46,19 @@ opts = {
 
 | `accent`     | 函数定义 | 函数调用 | 操作焦点 |
 | ------------ | -------- | -------- | -------- |
-| `minimal`    | 亮灰     | 灰       | Clay     |
+| `minimal`    | 强调灰   | 灰       | Clay     |
 | `restrained` | Clay     | 灰       | Clay     |
 | `expressive` | Clay     | Clay     | Clay     |
 
 区分函数定义与调用需要 Tree-sitter 高亮或 LSP 定义标记。设置 `transparent = false` 使用实色背景；浮窗、状态栏与选区始终保留底色。
 
-通过 `palette` 修改[色板](lua/clay/palette.lua)，通过 `overrides` 覆盖高亮。完整示例见 [`:help clay-options`](doc/clay.txt)。配置变更后执行 `:colorscheme clay` 生效。
+通过 `palette` 修改[色板](lua/clay/palette.lua)，通过 `overrides` 覆盖高亮。`palette` 顶层颜色作用于两个变体，`dark`、`light` 子表只作用于对应变体：
+
+```lua
+palette = { clay = "#c87860", light = { bg = "#ffffff" } }
+```
+
+完整示例见 [`:help clay-options`](doc/clay.txt)。配置变更后执行 `:colorscheme clay` 生效。
 
 ## 插件适配
 
@@ -73,6 +79,7 @@ nvim-scrollbar 需设置 `set_highlights = false`，nvim-navic 需设置 `highli
 ```bash
 make preview
 CLAY_ACCENT=expressive make preview
+CLAY_BACKGROUND=light make preview
 ```
 
 多语言预览：

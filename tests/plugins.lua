@@ -112,14 +112,18 @@ local function run()
     end
   end
   assert(count > 0, "No supported plugin checkouts found")
-  for _, opts in ipairs({ { transparent = false }, { palette = { clay = "#c87860" } }, {} }) do
-    theme.setup(opts)
+  for _, case in ipairs({
+    { opts = { transparent = false } }, { opts = { palette = { clay = "#c87860" } } },
+    { opts = {}, background = "light" }, { opts = {} },
+  }) do
+    vim.o.background = case.background or "dark"
+    theme.setup(case.opts)
     theme.load() -- Snapshot before ColorScheme hooks from the real plugins run.
     local expected = snapshot()
     vim.cmd.colorscheme("clay")
     unchanged(expected, "ColorScheme reload")
   end
-  print(string.format("%d real plugin checks passed, %d skipped; opaque, custom accent, and default reloads passed", count, skipped))
+  print(string.format("%d real plugin checks passed, %d skipped; opaque, custom accent, light, and default reloads passed", count, skipped))
 end
 
 local ok, err = xpcall(run, debug.traceback)
