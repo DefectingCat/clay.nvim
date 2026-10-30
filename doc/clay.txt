@@ -127,6 +127,7 @@ lazy.nvim                github.com/folke/lazy.nvim
 mason.nvim               github.com/mason-org/mason.nvim
 mini.nvim                github.com/nvim-mini/mini.nvim
 neo-tree.nvim            github.com/nvim-neo-tree/neo-tree.nvim
+neogit                   github.com/NeogitOrg/neogit
 noice.nvim               github.com/folke/noice.nvim
 nvim-cmp                 github.com/hrsh7th/nvim-cmp
 nvim-lightbulb           github.com/kosayoda/nvim-lightbulb

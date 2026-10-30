@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### 新增
+
+- 适配 Neogit：Diff、行内差异、hunk 标题、文件状态和提交图改用 Clay 灰阶，弹窗按键用 Clay。此前 Neogit 会把灰色的 `ErrorMsg` 与 `String` 重新着色，行内差异显示成红色和橙色，表面带冷色偏。
+
 ## [v0.4.0] - 2026-10-30
 
 ### 新增

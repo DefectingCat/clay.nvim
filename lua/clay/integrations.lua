@@ -1,6 +1,6 @@
 local M = {}
 
-local modules = { "ui", "navigation", "editing" }
+local modules = { "ui", "navigation", "editing", "git" }
 
 -- Upstream plugins styled here; patterns match the highlight groups each one owns.
 M.plugins = {

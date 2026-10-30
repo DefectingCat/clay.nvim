@@ -43,7 +43,7 @@ local function unchanged(expected, label)
     "Lazy", "Mason", "Noice", "Notify", "Trouble", "BufferLine", "Oil", "Flash", "Navic", "Dashboard",
     "Todo", "RainbowDelimiter", "Headline", "Dash", "DoubleDash", "CodeBlock", "Quote", "Yanky",
     "Scrollbar", "LightBulb", "GitGutter", "IndentLine", "MiniJump", "MiniStarter", "MiniSurround",
-    "MiniTrailspace", "MiniCursorword", "MiniDiff",
+    "MiniTrailspace", "MiniCursorword", "MiniDiff", "Neogit",
   }
   for name in pairs(vim.api.nvim_get_hl(0, {})) do
     for _, prefix in ipairs(prefixes) do
@@ -90,6 +90,10 @@ local checks = {
     end
     require("mini.starter").setup({ autoopen = false })
     require("mini.diff").setup({ source = require("mini.diff").gen_source.none() })
+  end },
+  { "neogit", function()
+    assert(add("plenary.nvim"), "neogit requires a plenary.nvim checkout")
+    require("neogit").setup({})
   end },
 }
 
